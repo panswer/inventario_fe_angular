@@ -15,7 +15,7 @@ Lista de tarea de funcionalidades a implementar
 
 ### Vistas
 
-- :x: Login
+- :white_check_mark: Login
 - :x: Lista de productos
     - :x: Formulario para agregar producto
     - :x: Formulario para actualizar producto

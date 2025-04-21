@@ -1,1 +1,31 @@
-<p>login works!</p>
+<div class="grid grid-cols-1 h-full content-center justify-items-center">
+  <form
+    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
+    [formGroup]="loginForm"
+    (submit)="handleSubmit($event)"
+  >
+    <label for="email">email</label>
+    <input
+      type="email"
+      class="border-2 border-indigo-500 rounded-md"
+      formControlName="email"
+      id="email"
+    />
+
+    <label for="password" class="mt-2">contraseña</label>
+    <input
+      type="password"
+      class="border-2 border-indigo-500 rounded-md"
+      formControlName="password"
+      id="password"
+    />
+
+    <button
+      type="submit"
+      class="rounded-md border-indigo-500 mt-2 bg-indigo-500 text-white hover:bg-indigo-800 hover:cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-indigo-500"
+      [disabled]="loginForm.status === 'INVALID' || isLoading"
+    >
+      Iniciar sesión
+    </button>
+  </form>
+</div>
