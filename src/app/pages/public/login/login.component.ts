@@ -8,6 +8,7 @@ import {
 import { lowerReg, numReg, specialCharReg, upperReg } from '../../../utils/reg';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
+import { version } from '../../../../../package.json';
 
 @Component({
   selector: 'app-login',
@@ -25,6 +26,7 @@ export class LoginComponent implements OnInit {
     ]),
   });
   isLoading = false;
+  readonly version = version;
 
   constructor(private authService: AuthService, private router: Router) {}
 
