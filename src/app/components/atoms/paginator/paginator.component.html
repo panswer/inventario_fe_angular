@@ -1,0 +1,27 @@
+<div class="flex gap-2">
+  <select name="limitOption" id="limit-option" [formControl]="currentLimit">
+    <option *ngFor="let option of limitOptions" [value]="option">
+      {{ option }}
+    </option>
+  </select>
+
+  <div class="flex gap-2">
+    <button
+      class="hover:bg-blue-500 rounded-full w-6 h-6 hover:cursor-pointer disabled:hover:bg-inherit disabled:text-gray-500 disabled:hover:cursor-default"
+      (click)="handleChangePage(-1)"
+      [disabled]="currentPage <= 1"
+    >
+      <fa-icon [icon]="faArrowAltCircleLeft"></fa-icon>
+    </button>
+
+    <span class="cursor-default">{{ currentPage }}</span>
+
+    <button
+      class="hover:bg-blue-500 rounded-full w-6 h-6 hover:cursor-pointer disabled:hover:bg-inherit disabled:text-gray-500 disabled:hover:cursor-default"
+      (click)="handleChangePage(1)"
+      [disabled]="currentPage >= totalPages"
+    >
+      <fa-icon [icon]="faArrowAltCircleRight"></fa-icon>
+    </button>
+  </div>
+</div>
