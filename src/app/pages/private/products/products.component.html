@@ -1,1 +1,23 @@
-<p>products works!</p>
+<div class="flex h-full justify-center pt-5">
+  <app-table [cols]="tableField" [rows]="products" [total]="productTotal">
+    <ng-template appTableBodyCell let-element let-key="key">
+      <ng-container [ngSwitch]="key">
+        <ng-container *ngSwitchCase="'createdAt'">
+            {{element[key] | date: "YYYY-MM-dd HH:mm:ss"}}
+        </ng-container>
+
+        <ng-container *ngSwitchCase="'action'">
+          <div class="ml-2 mr-2">
+            <span class="hover:cursor-pointer">
+              <fa-icon [icon]="editIcon"></fa-icon>
+            </span>
+          </div>
+        </ng-container>
+
+        <ng-container *ngSwitchDefault>
+          <span>{{ element[key] }}</span>
+        </ng-container>
+      </ng-container>
+    </ng-template>
+  </app-table>
+</div>

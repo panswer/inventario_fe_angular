@@ -1,0 +1,36 @@
+<table
+  class="border-collapse border border-gray-400 bg-blue-800/50 text-blue-400/80"
+>
+  <thead>
+    <tr>
+      <th *ngFor="let col of cols" class="border border-gray-300 p-1">
+        {{ col.text }}
+      </th>
+    </tr>
+  </thead>
+
+  <tbody *ngIf="rows">
+    <tr *ngFor="let row of rows">
+      <td *ngFor="let col of cols" class="border border-gray-300 p-1">
+        <ng-container
+          [ngTemplateOutlet]="tableBodyCellTemplate || defaultTableBodyCell"
+          [ngTemplateOutletContext]="{ $implicit: row, key: col.field }"
+        ></ng-container>
+      </td>
+    </tr>
+  </tbody>
+
+  <tfoot>
+    <tr>
+      <td [colSpan]="cols.length" class="border border-gray-300 p-1">
+        <div class="flex justify-end">
+          <app-paginator [total]="total"></app-paginator>
+        </div>
+      </td>
+    </tr>
+  </tfoot>
+</table>
+
+<ng-template #defaultTableBodyCell let-element let-key="key">
+  {{ element[key] }}
+</ng-template>
