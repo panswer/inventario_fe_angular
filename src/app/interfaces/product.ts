@@ -3,6 +3,6 @@ export interface ProductInterface {
   name: string;
   inStock: boolean;
   createdBy: string;
-  createdAt: string;
-  updatedAt: string;
+  createdAt: number;
+  updatedAt: number;
 }

@@ -12,6 +12,8 @@ import { ProductInterface } from '../../../interfaces/product';
 import { TableBodyCellDirective } from '../../../directives/table-body-cell.directive';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEdit } from '@fortawesome/free-regular-svg-icons';
+import { ButtonComponent } from '../../../components/atoms/button/button.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-products',
@@ -23,6 +25,7 @@ import { faEdit } from '@fortawesome/free-regular-svg-icons';
     TableBodyCellDirective,
     DatePipe,
     FontAwesomeModule,
+    ButtonComponent,
   ],
   templateUrl: './products.component.html',
   styleUrl: './products.component.css',
@@ -55,7 +58,7 @@ export class ProductsComponent implements OnInit {
 
   editIcon = faEdit;
 
-  constructor(private productService: ProductService) {}
+  constructor(private productService: ProductService, private router: Router) {}
 
   ngOnInit(): void {
     this.productService.getAllProducts(this.pageData).subscribe((res) => {
@@ -66,5 +69,9 @@ export class ProductsComponent implements OnInit {
         alert(res.message);
       }
     });
+  }
+
+  goToCreateProduct() {
+    this.router.navigate(['/product/new']);
   }
 }

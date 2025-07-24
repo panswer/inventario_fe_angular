@@ -44,8 +44,6 @@ export class PaginatorComponent implements OnInit {
   }
 
   handleChangePage(num: number) {
-    console.log(num);
-
     if (this.currentPage + num < 1) {
       return;
     }
