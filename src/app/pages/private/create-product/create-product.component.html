@@ -1,0 +1,48 @@
+<div
+  class="grid grid-cols-1 h-full content-center justify-items-center dark:text-blue-500/80"
+>
+  <form
+    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
+    [formGroup]="productForm"
+    (submit)="handlerPreventEvent($event)"
+  >
+    <label for="name">nombre</label>
+    <input
+      type="text"
+      name="name"
+      id="name"
+      class="border-2 border-indigo-500 rounded-md"
+      formControlName="name"
+    />
+
+    <label for="amount">precio</label
+    ><input
+      type="number"
+      name="amount"
+      id="amount"
+      class="border-2 border-indigo-500 rounded-md"
+      formControlName="amount"
+    />
+
+    <label for="coin">moneda</label>
+    <select
+      name="coin"
+      id="coin"
+      formControlName="coin"
+      class="border-2 border-indigo-500 rounded-md"
+    >
+      <option *ngFor="let coinType of coinList" [value]="coinType">
+        {{coinType}}
+      </option>
+    </select>
+
+    <div class="flex justify-around">
+      <app-button (clickEvent)="goBack()">regresar</app-button>
+      <app-button
+        [disable]="productForm.status === 'INVALID' || isLoading"
+        (clickEvent)="handlerSubmit()"
+        >crear</app-button
+      >
+    </div>
+  </form>
+</div>

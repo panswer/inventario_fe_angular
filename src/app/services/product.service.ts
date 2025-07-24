@@ -1,11 +1,18 @@
 import { inject, Injectable } from '@angular/core';
-import { catchError, Observable, of } from 'rxjs';
+import { catchError, Observable, of, switchMap } from 'rxjs';
 import {
   GetAllProductsInput,
   GetAllProductsOutput,
 } from '../interfaces/services/product-service';
 import { ProductPath } from '../enums/api/product';
 import { RequestService } from './request.service';
+import {
+  CreateProduct,
+  CreateProductResult,
+  CreateProductResultInterface,
+} from '../interfaces/create-product';
+import { Product } from '../models/product';
+import { Price } from '../models/price';
 
 @Injectable({
   providedIn: 'root',
@@ -39,6 +46,27 @@ export class ProductService {
             message: 'No se pudo consultar la lista de productos',
           })
         )
+      );
+  }
+
+  createProduct(newProduct: CreateProduct): Observable<CreateProductResult> {
+    return this.requestService
+      .postRequest({
+        path: '/product',
+        body: newProduct,
+      })
+      .pipe(
+        switchMap((value: CreateProductResultInterface) => {
+          return of<CreateProductResult>({
+            product: new Product(value.product),
+            price: new Price(value.price),
+          });
+        }),
+        catchError(() => {
+          return of({
+            message: "No se pudo crear el producto"
+          })
+        })
       );
   }
 }
