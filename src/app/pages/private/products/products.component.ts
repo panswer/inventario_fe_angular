@@ -58,7 +58,7 @@ export class ProductsComponent implements OnInit {
 
   editIcon = faEdit;
 
-  constructor(private productService: ProductService, private router: Router) {}
+  constructor(private productService: ProductService, private router: Router) { }
 
   ngOnInit(): void {
     this.productService.getAllProducts(this.pageData).subscribe((res) => {
@@ -73,5 +73,9 @@ export class ProductsComponent implements OnInit {
 
   goToCreateProduct() {
     this.router.navigate(['/product/new']);
+  }
+
+  goToProductData(id: string) {
+    this.router.navigate(['/product', id]);
   }
 }

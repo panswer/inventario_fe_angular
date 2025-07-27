@@ -12,7 +12,7 @@
   
           <ng-container *ngSwitchCase="'action'">
             <div class="ml-2 mr-2">
-              <span class="hover:cursor-pointer">
+              <span class="hover:cursor-pointer" (click)="goToProductData(element['_id'])">
                 <fa-icon [icon]="editIcon"></fa-icon>
               </span>
             </div>

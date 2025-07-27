@@ -1,0 +1,75 @@
+<div
+  class="grid grid-cols-1 h-full content-center justify-items-center dark:text-blue-500/80 gap-4"
+>
+  <form
+    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
+    [formGroup]="productForm"
+  >
+    <label for="name">Nombre</label>
+    <input
+      type="text"
+      name="name"
+      id="name"
+      formControlName="name"
+      class="border-2 border-indigo-500 rounded-md"
+      [disabled]="isLoading"
+    />
+
+    <label for="inStock" class="inStock">Mostrar</label>
+    <input
+      type="checkbox"
+      name="inStock"
+      id="inStock"
+      formControlName="inStock"
+      [disabled]="isLoading"
+    />
+
+    <div class="flex justify-end">
+      <app-button
+        [disable]="productForm.status === 'INVALID' || isLoading"
+        (clickEvent)="handlerSubmitProduct()"
+      >
+        Guardar
+      </app-button>
+    </div>
+  </form>
+
+  <form
+    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
+    [formGroup]="priceForm"
+  >
+    <label for="amount">Precio</label>
+    <input
+      type="number"
+      name="amount"
+      id="amount"
+      formControlName="amount"
+      [disabled]="isLoading"
+    />
+
+    <label for="coin">Moneda</label>
+    <select name="coin" id="coin" [disabled]="isLoading" formControlName="coin">
+      <option *ngFor="let coin of coinList" [value]="coin">
+        {{ coin }}
+      </option>
+    </select>
+
+    <label for="isActive">Activo</label>
+    <input
+      type="checkbox"
+      name="isActive"
+      id="isActive"
+      formControlName="isActive"
+      [disabled]="isLoading"
+    />
+
+    <div class="flex justify-between">
+      <app-button (clickEvent)="goBack()">Regresar</app-button>
+      <app-button
+        [disable]="priceForm.status === 'INVALID' || isLoading"
+        (clickEvent)="handlerSubmitPrice()"
+        >Guarda</app-button
+      >
+    </div>
+  </form>
+</div>
