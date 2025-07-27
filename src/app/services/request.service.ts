@@ -3,6 +3,7 @@ import { environment } from '../../environments/environment';
 import { catchError, Observable, throwError } from 'rxjs';
 import {
   RequestPostServiceInput,
+  RequestPutServiceInput,
   RequestServiceInput,
 } from '../interfaces/services/request-service';
 import { HttpClient } from '@angular/common/http';
@@ -22,7 +23,7 @@ export class RequestService {
   private http = inject(HttpClient);
   private router = inject(Router);
 
-  constructor() {}
+  constructor() { }
 
   private getDefaultHeader(): Record<string, string> {
     const headers: Record<string, string> = {
@@ -80,6 +81,22 @@ export class RequestService {
         return throwError(err);
       })
     );
+  }
+
+  putRequest(params: RequestPutServiceInput): Observable<any> {
+    const uri = `${this.host}${params.path}`;
+    const headers = this.getDefaultHeader();
+
+    return this
+      .http
+      .put(uri, params.body, { headers })
+      .pipe(
+        catchError((err) => {
+          this.validateStatusResult(err.status);
+
+          return throwError(err);
+        })
+      )
   }
 
   logout() {

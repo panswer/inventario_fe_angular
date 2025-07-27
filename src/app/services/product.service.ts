@@ -3,6 +3,9 @@ import { catchError, Observable, of, switchMap } from 'rxjs';
 import {
   GetAllProductsInput,
   GetAllProductsOutput,
+  GetProductByIdOutput,
+  UpdateProductByIdInput,
+  UpdateProductByIdOutput,
 } from '../interfaces/services/product-service';
 import { ProductPath } from '../enums/api/product';
 import { RequestService } from './request.service';
@@ -67,6 +70,29 @@ export class ProductService {
             message: "No se pudo crear el producto"
           })
         })
+      );
+  }
+
+  getProductById(productId: string): Observable<GetProductByIdOutput> {
+    return this
+      .requestService
+      .getRequest({
+        path: `/product/${productId}`,
+      })
+      .pipe(
+        catchError(() => of({ message: "No se pudo obtener el producto" }))
+      )
+  }
+
+  updateProductById(data: UpdateProductByIdInput): Observable<UpdateProductByIdOutput> {
+    return this
+      .requestService
+      .putRequest({
+        path: `/product/${data.productId}`,
+        body: data.data
+      })
+      .pipe(
+        catchError(() => of({ message: "No se pudo actualizar el producto" }))
       );
   }
 }

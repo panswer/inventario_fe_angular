@@ -4,6 +4,7 @@ import { ProductsComponent } from './pages/private/products/products.component';
 import { authGuard } from './guards/auth.guard';
 import { Page404Component } from './pages/public/page-404/page-404.component';
 import { CreateProductComponent } from './pages/private/create-product/create-product.component';
+import { ProductDataComponent } from './pages/private/product-data/product-data.component';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,9 @@ export const routes: Routes = [
         children: [{
           path: 'new',
           component: CreateProductComponent,
+        }, {
+          path: ':productId',
+          component: ProductDataComponent,
         }]
       }
     ],

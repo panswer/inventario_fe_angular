@@ -6,3 +6,5 @@ export interface RequestServiceInput {
 export interface RequestPostServiceInput extends RequestServiceInput {
   body?: any;
 }
+
+export interface RequestPutServiceInput extends RequestPostServiceInput { }
