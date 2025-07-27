@@ -20,7 +20,7 @@ Lista de tarea de funcionalidades a implementar
 - :x: Lista de productos
     - :white_check_mark: Tabla con productos
     - :white_check_mark: Formulario para agregar producto
-    - :x: Formulario para actualizar producto
+    - :white_check_mark: Formulario para actualizar producto
 - :x: Lista de ventas
     - :x: Tabla con ventas
     - :x: Detalle de venta
