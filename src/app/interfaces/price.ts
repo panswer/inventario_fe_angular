@@ -3,7 +3,6 @@ export interface PriceInterface {
   coin: string;
   createdAt: number;
   createdBy: string;
-  isActive: boolean;
   productId: string;
   updatedAt: number;
   _id: string;

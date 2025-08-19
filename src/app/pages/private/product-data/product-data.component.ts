@@ -6,13 +6,12 @@ import { Product } from '../../../models/product';
 import { PriceService } from '../../../services/price.service';
 import { Price } from '../../../models/price';
 import { map } from 'rxjs';
-import { Location, NgFor } from '@angular/common';
+import { Location } from '@angular/common';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
-import { UpdateProductByIdData } from '../../../interfaces/services/product-service';
 
 @Component({
   selector: 'app-product-data',
-  imports: [ReactiveFormsModule, NgFor, ButtonComponent],
+  imports: [ReactiveFormsModule, ButtonComponent],
   templateUrl: './product-data.component.html',
   styleUrl: './product-data.component.css'
 })
@@ -29,7 +28,6 @@ export class ProductDataComponent implements OnInit {
   priceForm = new FormGroup({
     amount: new FormControl(0, [Validators.required, Validators.min(0.01)]),
     coin: new FormControl('', [Validators.required]),
-    isActive: new FormControl(false, [Validators.required])
   });
   coinList: string[] = [];
 
@@ -80,7 +78,6 @@ export class ProductDataComponent implements OnInit {
           this.priceForm.setValue({
             amount: this.price.amount,
             coin: this.price.coin,
-            isActive: this.price.isActive,
           });
           this.isLoading = false;
         }
@@ -141,16 +138,15 @@ export class ProductDataComponent implements OnInit {
 
     this.isLoading = true;
 
-    const { amount, coin, isActive } = this.priceForm.value;
+    const { amount, coin } = this.priceForm.value;
     this
       .priceService
       .updatePriceById({
         data: {
           amount: amount ?? this.price.amount,
-          coin: coin ?? this.price.coin,
-          isActive: isActive ?? this.price.isActive,
         },
         priceId: this.price._id,
+        coin: this.price.coin,
       })
       .subscribe(result => {
         if (result.price) {

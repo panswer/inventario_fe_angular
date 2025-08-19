@@ -43,23 +43,8 @@
       type="number"
       name="amount"
       id="amount"
+      class="border-2 border-indigo-500 rounded-md"
       formControlName="amount"
-      [disabled]="isLoading"
-    />
-
-    <label for="coin">Moneda</label>
-    <select name="coin" id="coin" [disabled]="isLoading" formControlName="coin">
-      <option *ngFor="let coin of coinList" [value]="coin">
-        {{ coin }}
-      </option>
-    </select>
-
-    <label for="isActive">Activo</label>
-    <input
-      type="checkbox"
-      name="isActive"
-      id="isActive"
-      formControlName="isActive"
       [disabled]="isLoading"
     />
 

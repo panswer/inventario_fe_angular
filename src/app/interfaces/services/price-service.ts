@@ -7,12 +7,11 @@ export interface GetPriceByProductIdOutput {
 
 export interface UpdatePriceByIdData {
     amount: number;
-    coin: string;
-    isActive: boolean;
 }
 
 export interface UpdatePriceByIdInput {
     priceId: string;
+    coin: string;
     data: UpdatePriceByIdData;
 }
 
