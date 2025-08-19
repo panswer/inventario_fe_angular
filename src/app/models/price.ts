@@ -6,7 +6,6 @@ export class Price implements PriceInterface {
   coin: string;
   createdAt: number;
   createdBy: string;
-  isActive: boolean;
   productId: string;
   updatedAt: number;
 
@@ -16,7 +15,6 @@ export class Price implements PriceInterface {
     this.coin = params.coin;
     this.createdAt = params.createdAt;
     this.createdBy = params.createdBy;
-    this.isActive = params.isActive;
     this.productId = params.productId;
     this.updatedAt = params.updatedAt;
   }

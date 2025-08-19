@@ -5,6 +5,7 @@ import { authGuard } from './guards/auth.guard';
 import { Page404Component } from './pages/public/page-404/page-404.component';
 import { CreateProductComponent } from './pages/private/create-product/create-product.component';
 import { ProductDataComponent } from './pages/private/product-data/product-data.component';
+import { SellersComponent } from './pages/private/sellers/sellers.component';
 
 export const routes: Routes = [
   {
@@ -23,6 +24,13 @@ export const routes: Routes = [
           path: ':productId',
           component: ProductDataComponent,
         }]
+      },
+      {
+        path: 'seller',
+        children: [{
+          path: '',
+          component: SellersComponent,
+        }],
       }
     ],
     canActivateChild: [authGuard],
