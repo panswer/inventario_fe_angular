@@ -1,4 +1,5 @@
 import { ProductInterface } from '../interfaces/product';
+import { Price } from './price';
 
 export class Product implements ProductInterface {
   _id: string;
@@ -7,6 +8,7 @@ export class Product implements ProductInterface {
   inStock: boolean;
   name: string;
   updatedAt: number;
+  price?: Price;
 
   constructor(params: ProductInterface) {
     this._id = params._id;
@@ -15,5 +17,9 @@ export class Product implements ProductInterface {
     this.inStock = params.inStock;
     this.name = params.name;
     this.updatedAt = params.updatedAt;
+  }
+
+  setPrice(price: Price): void {
+    this.price = price;
   }
 }

@@ -1,6 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import { RequestService } from './request.service';
-import { GetBillsInput, GetBillsOutput } from '../interfaces/services/bill-service';
+import { CreateBillInput, CreateBillOutput, GetBillsInput, GetBillsOutput } from '../interfaces/services/bill-service';
 import { catchError, Observable, of } from 'rxjs';
 
 @Injectable({
@@ -32,6 +32,18 @@ export class BillService {
           total: 0,
           message: "Unknown error",
         }))
+      )
+  }
+
+  createBill(params: CreateBillInput): Observable<CreateBillOutput> {
+    return this
+      .requestService
+      .postRequest({
+        path: '/bill',
+        body: params,
+      })
+      .pipe(
+        catchError(() => of({ message: "Couldn't create bill success" }))
       )
   }
 }
