@@ -10,3 +10,18 @@ export interface GetBillsOutput {
     total: number;
     message?: string;
 }
+
+export interface CreateBillItemInput {
+    count: number;
+    productId: string;
+    price: number;
+    coin: string;
+}
+
+export interface CreateBillInput {
+    sellers: CreateBillItemInput[];
+}
+
+export interface CreateBillOutput {
+    message?: string;
+}

@@ -6,6 +6,7 @@ import { DatePipe, Location, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@an
 import { BillService } from '../../../services/bill.service';
 import { Bill } from '../../../models/bill';
 import { TableBodyCellDirective } from "../../../directives/table-body-cell.directive";
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sellers',
@@ -31,6 +32,7 @@ export class SellersComponent implements OnInit {
   constructor(
     private readonly location: Location,
     private readonly billService: BillService,
+    private readonly router: Router,
   ) { }
 
   ngOnInit(): void {
@@ -53,5 +55,9 @@ export class SellersComponent implements OnInit {
           alert(res.message);
         }
       });
+  }
+
+  goToCreateBill() {
+    this.router.navigate(['/seller/create']);
   }
 }

@@ -1,0 +1,78 @@
+<div class="flex h-full justify-center items-center flex-col">
+  <div class="flex flex-col">
+    <form [formGroup]="mainFormGroup">
+      <div class="add-control flex items-center gap-3">
+        <select
+          name="products"
+          id="products"
+          class="border-2 border-indigo-500 rounded-md"
+          placeholder="producto"
+          formControlName="product"
+        >
+          <option *ngFor="let product of products" [value]="product._id">
+            {{ product.name }}
+          </option>
+        </select>
+        <input
+          type="number"
+          name=""
+          id="count"
+          class="border-2 border-indigo-500 rounded-md"
+          placeholder="cantidad"
+          formControlName="count"
+        />
+        <input
+          type="number"
+          id="cost"
+          class="border-2 border-indigo-500 rounded-md"
+          placeholder="sub-total"
+          [value]="controllersForm.subTotal.value"
+          [disabled]="true"
+        />
+        <app-button (clickEvent)="handlerAddProduct()">agregar</app-button>
+      </div>
+    </form>
+
+    <ul class="seller_list-container">
+      <li class="seller_item-content" *ngFor="let shopItem of shoppingCar">
+        <form [formGroup]="shopItem">
+          <select name="product" [disabled]="true">
+            <option
+              *ngFor="let product of allProducts"
+              [value]="product._id"
+              [selected]="product._id === shopItem.value.product"
+            >
+              {{ product.name }}
+            </option>
+          </select>
+          <input
+            type="number"
+            name="count"
+            class="border-2 border-indigo-500 rounded-md"
+            placeholder="cantidad"
+            formControlName="count"
+          />
+          <input
+            type="number"
+            name="subTotal"
+            class="border-2 border-indigo-500 rounded-md"
+            placeholder="subTotal"
+            [value]="shopItem.value.subTotal"
+            [disabled]="true"
+          />
+          <app-button (clickEvent)="deleteShoppingItem(shopItem)">x</app-button>
+        </form>
+      </li>
+
+      <li>
+        Total: {{total}}
+      </li>
+    </ul>
+
+    <div class="flex w-full flex-row gap-6 justify-end mt-3">
+
+      <app-button (clickEvent)="handlerBack()">regresar</app-button>
+      <app-button (clickEvent)="handlerSubmitBill()">Agregar venta</app-button>
+    </div>
+  </div>
+</div>

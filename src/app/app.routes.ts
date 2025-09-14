@@ -6,6 +6,7 @@ import { Page404Component } from './pages/public/page-404/page-404.component';
 import { CreateProductComponent } from './pages/private/create-product/create-product.component';
 import { ProductDataComponent } from './pages/private/product-data/product-data.component';
 import { SellersComponent } from './pages/private/sellers/sellers.component';
+import { CreateBillComponent } from './pages/private/create-bill/create-bill.component';
 
 export const routes: Routes = [
   {
@@ -30,6 +31,9 @@ export const routes: Routes = [
         children: [{
           path: '',
           component: SellersComponent,
+        }, {
+          path: 'create',
+          component: CreateBillComponent,
         }],
       }
     ],
