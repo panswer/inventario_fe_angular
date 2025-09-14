@@ -24,4 +24,4 @@ Lista de tarea de funcionalidades a implementar
 - :x: Lista de ventas
     - :white_check_mark: Tabla con ventas
     - :x: Detalle de venta
-    - :x: Formulario para guardar venta
+    - :white_check_mark: Formulario para guardar venta
