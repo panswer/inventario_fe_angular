@@ -1,8 +1,10 @@
+import { ProductInterface } from "./product";
+
 export interface SaleInterface {
     _id: string;
     count: number;
-    productId: string;
-    price: string;
+    productId: string | ProductInterface;
+    price: number;
     userId: string;
     createdAt: number;
     updatedAt: number;

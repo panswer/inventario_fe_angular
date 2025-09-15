@@ -12,6 +12,15 @@
             {{ element[key] | date : "YYYY-MM-dd HH:mm:ss" }}
           </ng-container>
 
+          <ng-container *ngSwitchCase="'actions'">
+            <span
+              class="hover:cursor-pointer"
+              (click)="goToBillDetail(element._id)"
+            >
+              <fa-icon [icon]="icon.eye"></fa-icon>
+            </span>
+          </ng-container>
+
           <ng-container *ngSwitchDefault>
             {{ element[key] }}
           </ng-container>

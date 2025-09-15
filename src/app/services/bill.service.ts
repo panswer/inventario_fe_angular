@@ -1,7 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 import { RequestService } from './request.service';
-import { CreateBillInput, CreateBillOutput, GetBillsInput, GetBillsOutput } from '../interfaces/services/bill-service';
-import { catchError, Observable, of } from 'rxjs';
+import { CreateBillInput, CreateBillOutput, GetBillDetailByBillIdOutput, GetBillsInput, GetBillsOutput } from '../interfaces/services/bill-service';
+import { catchError, Observable, of, switchMap } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -44,6 +44,20 @@ export class BillService {
       })
       .pipe(
         catchError(() => of({ message: "Couldn't create bill success" }))
+      )
+  }
+
+  getBillDetailById(billId: string): Observable<GetBillDetailByBillIdOutput> {
+    return this.requestService.getRequest({
+      path: `/bill/detail/${billId}`
+    })
+      .pipe(
+        switchMap(res => of({
+          bill: res.billDetail,
+        })),
+        catchError(() => of({
+          message: 'No se pudo obtener la orden de compra'
+        }))
       )
   }
 }
