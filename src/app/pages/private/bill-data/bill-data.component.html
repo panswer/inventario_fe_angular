@@ -1,0 +1,28 @@
+<div class="h-full flex justify-center items-center dark:text-blue-500/80">
+  <div
+    class="flex flex-col border-2 rounded-md border-indigo-500 p-5 flex flex-col gap-3"
+    *ngIf="bill"
+  >
+    <span>id: {{ bill._id }}</span>
+    <span>Fecha: {{ bill.createdAt | date : "YYYY-MM-dd hh:mm aa" }}</span>
+    <span
+      >Ultima actualización:
+      {{ bill.updatedAt | date : "YYYY-MM-dd hh:mm aa" }}</span
+    >
+
+    <div class="flex flex-col gap-1">
+      <span>Lista de productos</span>
+      <ul class="pl-3 pr-3 border-b-2 border-2 border-indigo-500">
+        <li *ngFor="let sale of bill.sales" class="flex flex-col gap-1 not-last:border-b-2 border-b-indigo-500">
+          <span *ngIf="sale.product">producto: {{ sale.product.name }}</span>
+          <span>costo unitario: {{ sale.price }}</span>
+          <span>cantidad: {{ sale.count }}</span>
+          <span>costo: {{ sale.subTotal }}</span>
+        </li>
+      </ul>
+    </div>
+
+    <span>Costo total: {{ bill.total }}</span>
+    <app-button (clickEvent)="handlerBack()">regresar</app-button>
+  </div>
+</div>

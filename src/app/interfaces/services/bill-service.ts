@@ -1,4 +1,5 @@
 import { Bill } from "../bill";
+import { SaleInterface } from "../sale";
 
 export interface GetBillsInput {
     page?: number;
@@ -23,5 +24,15 @@ export interface CreateBillInput {
 }
 
 export interface CreateBillOutput {
+    message?: string;
+}
+
+export interface BillDetail extends Bill {
+    sales: SaleInterface[];
+    total: number;
+}
+
+export interface GetBillDetailByBillIdOutput {
+    bill?: BillDetail;
     message?: string;
 }

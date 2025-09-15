@@ -7,6 +7,7 @@ import { CreateProductComponent } from './pages/private/create-product/create-pr
 import { ProductDataComponent } from './pages/private/product-data/product-data.component';
 import { SellersComponent } from './pages/private/sellers/sellers.component';
 import { CreateBillComponent } from './pages/private/create-bill/create-bill.component';
+import { BillDataComponent } from './pages/private/bill-data/bill-data.component';
 
 export const routes: Routes = [
   {
@@ -34,6 +35,9 @@ export const routes: Routes = [
         }, {
           path: 'create',
           component: CreateBillComponent,
+        }, {
+          path: ':billId',
+          component: BillDataComponent,
         }],
       }
     ],

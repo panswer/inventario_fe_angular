@@ -7,10 +7,12 @@ import { BillService } from '../../../services/bill.service';
 import { Bill } from '../../../models/bill';
 import { TableBodyCellDirective } from "../../../directives/table-body-cell.directive";
 import { Router } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faEye } from '@fortawesome/free-regular-svg-icons';
 
 @Component({
   selector: 'app-sellers',
-  imports: [ButtonComponent, TableComponent, TableBodyCellDirective, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe],
+  imports: [ButtonComponent, TableComponent, TableBodyCellDirective, NgSwitch, NgSwitchCase, NgSwitchDefault, DatePipe, FontAwesomeModule],
   templateUrl: './sellers.component.html',
   styleUrl: './sellers.component.css'
 })
@@ -21,12 +23,18 @@ export class SellersComponent implements OnInit {
   }, {
     field: 'createdAt',
     text: 'fecha de venta'
+  }, {
+    field: 'actions',
+    text: ''
   }];
   bills: Bill[] = [];
   billTotal = 0;
   pageData = {
     page: 1,
     limit: 10,
+  };
+  icon = {
+    eye: faEye,
   };
 
   constructor(
@@ -59,5 +67,9 @@ export class SellersComponent implements OnInit {
 
   goToCreateBill() {
     this.router.navigate(['/seller/create']);
+  }
+
+  goToBillDetail(billId: string) {
+    this.router.navigate(['/seller/', billId])
   }
 }
