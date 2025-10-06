@@ -23,10 +23,7 @@ CompraVentaFe is a project designed to manage product inventory and sales operat
 
 ## Technologies Used
 
-- Frontend: [Specify Framework/Library, e.g., React, Angular, Vue.js]
-- Backend: [Specify Framework/Library, e.g., Node.js, Python/Flask, Ruby on Rails]
-- Database: [Specify Database, e.g., PostgreSQL, MongoDB, MySQL]
-- Other: [List any other relevant technologies or libraries]
+- Frontend: Angular
 
 ## Getting Started
 
