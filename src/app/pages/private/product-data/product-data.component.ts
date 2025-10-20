@@ -146,7 +146,7 @@ export class ProductDataComponent implements OnInit {
           amount: amount ?? this.price.amount,
         },
         priceId: this.price._id,
-        coin: this.price.coin,
+        coin: coin || this.price.coin,
       })
       .subscribe(result => {
         if (result.price) {

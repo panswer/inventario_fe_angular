@@ -1,10 +1,14 @@
 import { TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { AppComponent } from './app.component';
 
 describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent],
+      providers: [
+        provideRouter([]) // Proporcionamos un mock del router para RouterOutlet
+      ]
     }).compileComponents();
   });
 
@@ -20,10 +24,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('compra_venta_fe');
   });
 
-  it('should render title', () => {
+  it('debería renderizar el router-outlet', () => {
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, compra_venta_fe');
+    expect(compiled.querySelector('router-outlet')).not.toBeNull();
   });
 });

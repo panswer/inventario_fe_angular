@@ -8,7 +8,8 @@ import {
 import { lowerReg, numReg, specialCharReg, upperReg } from '../../../utils/reg';
 import { AuthService } from '../../../services/auth.service';
 import { Router } from '@angular/router';
-import { version } from '../../../../../package.json';
+import { finalize } from 'rxjs';
+import { environment } from '../../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -26,7 +27,7 @@ export class LoginComponent implements OnInit {
     ]),
   });
   isLoading = false;
-  readonly version = version;
+  readonly version = environment.version;
 
   constructor(private authService: AuthService, private router: Router) {}
 
@@ -65,7 +66,7 @@ export class LoginComponent implements OnInit {
    *
    * @returns {Promise<void>}
    */
-  async handleSubmit(e: any): Promise<void> {
+  handleSubmit(e: Event): void {
     e.preventDefault();
 
     const { email, password } = this.loginForm.value;
@@ -73,18 +74,19 @@ export class LoginComponent implements OnInit {
     if (email && password) {
       this.isLoading = true;
 
-      this.authService.signIn({ email, password }).subscribe((res) => {
-        if (res.message) {
-          alert(res.message);
-        }
-
-        if (res.authorization) {
-          this.router.navigate(['']);
-        }
-
-        this.loginForm.setValue({ email: '', password: '' });
-        this.isLoading = false;
-      });
+      this.authService
+        .signIn({ email, password })
+        .pipe(finalize(() => (this.isLoading = false)))
+        .subscribe((res) => {
+          if (res.message) {
+            alert(res.message);
+            return;
+          }
+          if (res.authorization) {
+            this.loginForm.reset();
+            this.router.navigate(['']);
+          }
+        });
     }
   }
 }

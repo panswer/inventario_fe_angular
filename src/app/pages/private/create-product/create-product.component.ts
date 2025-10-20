@@ -48,6 +48,10 @@ export class CreateProductComponent implements OnInit {
   }
 
   handlerSubmit() {
+    if (this.productForm.invalid) {
+      return;
+    }
+
     this.isLoading = true;
 
     const { amount, coin, name } = this.productForm.value as CreateProduct;
@@ -60,14 +64,9 @@ export class CreateProductComponent implements OnInit {
       .subscribe((result) => {
         if (result.message) {
           alert(result.message);
-        }
-
-        if (result.price && result.product) {
-          this.productForm.setValue({
-            name: '',
-            amount: 0,
-            coin: '',
-          });
+        } else {
+          // Solo se considera éxito si no hay mensaje de error
+          this.productForm.reset({ name: '', amount: 0, coin: '' });
           alert('Se creo el producto');
         }
 

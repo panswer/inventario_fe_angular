@@ -22,21 +22,15 @@ export class AuthService {
         body: data,
       })
       .pipe(
-        catchError(() =>
-          of({
-            message: 'Email o clave invalido',
-          })
-        ),
-        switchMap((res) => {
+        switchMap((res: AuthServiceSignInOutput) => {
           if (res.authorization) {
             this.requestService.setToken(res.authorization);
             this.router.navigate(['']);
           }
 
-          return of({
-            authorization: res.authorization,
-          });
-        })
+          return of(res);
+        }),
+        catchError(() => of({ message: 'Email o clave invalido' }))
       );
   }
 
