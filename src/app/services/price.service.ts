@@ -39,7 +39,7 @@ export class PriceService {
     return this
       .requestService
       .putRequest({
-        path: `/price/${data.priceId}`,
+        path: `/price/${data.priceId}/${data.coin}`,
         body: data.data
       })
       .pipe(

@@ -1,0 +1,41 @@
+# .github/workflows/ci.yml
+
+# Nombre del workflow que aparecerá en la pestaña "Actions" de GitHub
+name: Angular CI
+
+# Define cuándo se debe ejecutar este workflow
+on:
+  # Se ejecuta en cada push a un Pull Request dirigido a la rama master
+  pull_request:
+    branches: [ master ]
+  
+  # También permite ejecutarlo manualmente desde la interfaz de GitHub
+  workflow_dispatch:
+
+# Define los trabajos (jobs) que se ejecutarán
+jobs:
+  # Nombre del trabajo. Puedes llamarlo como quieras.
+  build_and_test:
+    # El tipo de máquina virtual en la que se ejecutará el trabajo
+    runs-on: ubuntu-latest
+
+    # Pasos que se ejecutarán secuencialmente
+    steps:
+      # 1. Clona tu repositorio en la máquina virtual
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Configura el entorno de Node.js
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x' # Puedes usar la versión de Node.js que necesites
+          cache: 'npm' # Habilita el caché para las dependencias de npm
+
+      # 3. Instala las dependencias del proyecto
+      - name: Install dependencies
+        run: npm ci # 'npm ci' es más rápido y seguro para CI que 'npm install'
+
+      # 4. Ejecuta las pruebas unitarias
+      - name: Run unit tests
+        run: npm test -- --no-watch --browsers=ChromeHeadless
