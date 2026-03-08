@@ -2,6 +2,10 @@ import { inject, Injectable } from '@angular/core';
 import {
   AuthServiceSignInInput,
   AuthServiceSignInOutput,
+  AuthServiceResetPasswordInput,
+  AuthServiceResetPasswordOutput,
+  AuthServiceResetPasswordVerifyInput,
+  AuthServiceResetPasswordVerifyOutput,
 } from '../interfaces/services/auth-service';
 import { catchError, Observable, of, switchMap } from 'rxjs';
 import { AuthorizationPath } from '../enums/api/authorization';
@@ -40,5 +44,35 @@ export class AuthService {
 
   isValidToken(): boolean {
     return !!this.getToken();
+  }
+
+  resetPassword(data: AuthServiceResetPasswordInput): Observable<AuthServiceResetPasswordOutput> {
+    return this.requestService
+      .postRequest({
+        path: AuthorizationPath.RESET_PASSWORD,
+        body: data,
+      })
+      .pipe(
+        catchError(() => of({ message: 'No se pudo enviar el correo de recuperación' }))
+      );
+  }
+
+  resetPasswordVerify(data: AuthServiceResetPasswordVerifyInput): Observable<AuthServiceResetPasswordVerifyOutput> {
+    return this.requestService
+      .postRequest({
+        path: AuthorizationPath.RESET_PASSWORD_VERIFY,
+        body: data,
+      })
+      .pipe(
+        catchError((err) => {
+          if (err.status === 404) {
+            return of({ code: 1003, message: 'Token o correo inválido' });
+          }
+          if (err.status === 500) {
+            return of({ code: 1004, message: 'Error del servidor' });
+          }
+          return of({ message: 'No se pudo verificar el token' });
+        })
+      );
   }
 }

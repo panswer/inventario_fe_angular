@@ -56,7 +56,7 @@ describe('AuthService', () => {
         expect(requestServiceSpy.setToken).toHaveBeenCalledWith('fake-jwt-token');
         expect(routerSpy.navigate).toHaveBeenCalledWith(['']);
         expect(result.authorization).toBe('fake-jwt-token');
-        done(); // La prueba de éxito no necesita cambios
+        done();
       });
     });
 
@@ -102,6 +102,97 @@ describe('AuthService', () => {
     it('debería devolver false si no hay un token', () => {
       requestServiceSpy.getToken.and.returnValue('');
       expect(service.isValidToken()).toBeFalse();
+    });
+  });
+
+  describe('resetPassword', () => {
+    const resetPasswordData = { email: 'test@test.com' };
+
+    it('debería llamar a postRequest con la ruta correcta', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(of({}));
+
+      service.resetPassword(resetPasswordData).subscribe(() => {
+        expect(requestServiceSpy.postRequest).toHaveBeenCalledWith({
+          path: AuthorizationPath.RESET_PASSWORD,
+          body: resetPasswordData,
+        });
+        done();
+      });
+    });
+
+    it('debería manejar el error de la petición y devolver un mensaje', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => new Error('Network error'))
+      );
+
+      service.resetPassword(resetPasswordData).subscribe((result) => {
+        expect(result.message).toBe('No se pudo enviar el correo de recuperación');
+        done();
+      });
+    });
+  });
+
+  describe('resetPasswordVerify', () => {
+    const verifyData = {
+      email: 'test@test.com',
+      token: '123456',
+      password: 'Password123!',
+    };
+
+    it('debería llamar a postRequest con la ruta correcta', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(of({}));
+
+      service.resetPasswordVerify(verifyData).subscribe(() => {
+        expect(requestServiceSpy.postRequest).toHaveBeenCalledWith({
+          path: AuthorizationPath.RESET_PASSWORD_VERIFY,
+          body: verifyData,
+        });
+        done();
+      });
+    });
+
+    it('debería devolver un mensaje de éxito en respuesta 202', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(of({}));
+
+      service.resetPasswordVerify(verifyData).subscribe((result) => {
+        expect(result.message).toBeUndefined();
+        done();
+      });
+    });
+
+    it('debería manejar error 404 y devolver código 1003', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => ({ status: 404, message: 'Not found' }))
+      );
+
+      service.resetPasswordVerify(verifyData).subscribe((result) => {
+        expect(result.code).toBe(1003);
+        expect(result.message).toBe('Token o correo inválido');
+        done();
+      });
+    });
+
+    it('debería manejar error 500 y devolver código 1004', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => ({ status: 500, message: 'Server error' }))
+      );
+
+      service.resetPasswordVerify(verifyData).subscribe((result) => {
+        expect(result.code).toBe(1004);
+        expect(result.message).toBe('Error del servidor');
+        done();
+      });
+    });
+
+    it('debería manejar errores desconocidos', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => ({ status: 400, message: 'Bad request' }))
+      );
+
+      service.resetPasswordVerify(verifyData).subscribe((result) => {
+        expect(result.message).toBe('No se pudo verificar el token');
+        done();
+      });
     });
   });
 });
