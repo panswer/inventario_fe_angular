@@ -1,3 +1,12 @@
+export interface AuthServiceSignUpInput {
+    email: string;
+    password: string;
+}
+
+export interface AuthServiceSignUpOutput {
+    message?: string;
+}
+
 export interface AuthServiceSignInInput {
     email: string;
     password: string;

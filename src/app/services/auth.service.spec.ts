@@ -195,4 +195,62 @@ describe('AuthService', () => {
       });
     });
   });
+
+  describe('signUp', () => {
+    const signUpData = { email: 'test@test.com', password: 'Password123!' };
+
+    it('debería llamar a postRequest con la ruta correcta', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(of({}));
+
+      service.signUp(signUpData).subscribe(() => {
+        expect(requestServiceSpy.postRequest).toHaveBeenCalledWith({
+          path: AuthorizationPath.SIGN_UP,
+          body: signUpData,
+        });
+        done();
+      });
+    });
+
+    it('debería devolver respuesta exitosa sin mensaje de error', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(of({}));
+
+      service.signUp(signUpData).subscribe((result) => {
+        expect(result.message).toBeUndefined();
+        done();
+      });
+    });
+
+    it('debería manejar error 409 y devolver mensaje de usuario ya registrado', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => ({ status: 409, message: 'User already exists' }))
+      );
+
+      service.signUp(signUpData).subscribe((result) => {
+        expect(result.message).toBe('El usuario ya está registrado');
+        done();
+      });
+    });
+
+    it('debería manejar error 500 y devolver mensaje de error del servidor', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => ({ status: 500, message: 'Server error' }))
+      );
+
+      service.signUp(signUpData).subscribe((result) => {
+        expect(result.message).toBe('Error del servidor');
+        done();
+      });
+    });
+
+    it('debería manejar errores desconocidos', (done: DoneFn) => {
+      requestServiceSpy.postRequest.and.returnValue(
+        throwError(() => ({ status: 400, message: 'Bad request' }))
+      );
+
+      service.signUp(signUpData).subscribe((result) => {
+        expect(result.message).toBe('No se pudo registrar el usuario');
+        done();
+      });
+    });
+  });
 });

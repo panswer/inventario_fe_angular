@@ -9,28 +9,28 @@ import { Router } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
 import { of } from 'rxjs';
 
-import { LoginComponent } from './login.component';
+import { SignupComponent } from './signup.component';
 import { AuthService } from '../../../services/auth.service';
 
-describe('LoginComponent', () => {
-  let component: LoginComponent;
-  let fixture: ComponentFixture<LoginComponent>;
+describe('SignupComponent', () => {
+  let component: SignupComponent;
+  let fixture: ComponentFixture<SignupComponent>;
   let authServiceSpy: jasmine.SpyObj<AuthService>;
   let router: Router;
 
   beforeEach(async () => {
     authServiceSpy = jasmine.createSpyObj('AuthService', [
       'isValidToken',
-      'signIn',
+      'signUp',
     ]);
 
     await TestBed.configureTestingModule({
       imports: [
-        LoginComponent, 
+        SignupComponent, 
         ReactiveFormsModule, 
         RouterTestingModule.withRoutes([
-          { path: 'login', component: LoginComponent },
-          { path: '', component: LoginComponent },
+          { path: 'signup', component: SignupComponent },
+          { path: 'login', component: SignupComponent },
         ])
       ],
       providers: [
@@ -38,7 +38,7 @@ describe('LoginComponent', () => {
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(LoginComponent);
+    fixture = TestBed.createComponent(SignupComponent);
     component = fixture.componentInstance;
     router = TestBed.inject(Router);
     spyOn(router, 'navigate').and.returnValue(Promise.resolve(true));
@@ -65,11 +65,11 @@ describe('LoginComponent', () => {
     it('debería añadir los validadores de contraseña al formulario', () => {
       authServiceSpy.isValidToken.and.returnValue(false);
       fixture.detectChanges();
-      const passwordControl = component.loginForm.get('password');
+      const passwordControl = component.signupForm.get('password');
       passwordControl?.setValue('invalid');
-      expect(component.loginForm.hasError('uppercase')).toBeTrue();
-      expect(component.loginForm.hasError('num')).toBeTrue();
-      expect(component.loginForm.hasError('specialChar')).toBeTrue();
+      expect(component.signupForm.hasError('uppercase')).toBeTrue();
+      expect(component.signupForm.hasError('num')).toBeTrue();
+      expect(component.signupForm.hasError('specialChar')).toBeTrue();
     });
   });
 
@@ -79,44 +79,41 @@ describe('LoginComponent', () => {
       fixture.detectChanges();
     });
 
-    it('no debería llamar a signIn si el formulario es inválido', () => {
+    it('no debería llamar a signUp si el formulario es inválido', () => {
       const event = new Event('submit');
       component.handleSubmit(event);
-      expect(authServiceSpy.signIn).not.toHaveBeenCalled();
+      expect(authServiceSpy.signUp).not.toHaveBeenCalled();
     });
 
-    it('debería llamar a signIn y navegar en un login exitoso', fakeAsync(() => {
-      component.loginForm.setValue({
+    it('debería llamar a signUp y navegar a login en un signup exitoso', fakeAsync(() => {
+      component.signupForm.setValue({
         email: 'test@test.com',
         password: 'Password123!',
       });
-      authServiceSpy.signIn.and.returnValue(
-        of({ authorization: 'fake-token' })
-      );
+      authServiceSpy.signUp.and.returnValue(of({}));
 
       const event = new Event('submit');
       component.handleSubmit(event);
 
-      expect(authServiceSpy.signIn).toHaveBeenCalledWith({
+      expect(authServiceSpy.signUp).toHaveBeenCalledWith({
         email: 'test@test.com',
         password: 'Password123!',
       });
 
-      tick(); // Simula el paso del tiempo para que se resuelva el observable
+      tick();
 
-      expect(router.navigate).toHaveBeenCalledWith(['']);
+      expect(router.navigate).toHaveBeenCalledWith(['/login']);
       expect(component.isLoading).toBeFalse();
-      expect(component.loginForm.value).toEqual({ email: null, password: null });
     }));
 
-    it('debería mostrar una alerta si el login falla con un mensaje', fakeAsync(() => {
+    it('debería mostrar una alerta si el signup falla con un mensaje', fakeAsync(() => {
       spyOn(window, 'alert');
-      component.loginForm.setValue({
+      component.signupForm.setValue({
         email: 'test@test.com',
         password: 'Password123!',
       });
-      authServiceSpy.signIn.and.returnValue(
-        of({ message: 'Credenciales inválidas' })
+      authServiceSpy.signUp.and.returnValue(
+        of({ message: 'El usuario ya está registrado' })
       );
 
       const event = new Event('submit');
@@ -124,7 +121,7 @@ describe('LoginComponent', () => {
 
       tick();
 
-      expect(window.alert).toHaveBeenCalledWith('Credenciales inválidas');
+      expect(window.alert).toHaveBeenCalledWith('El usuario ya está registrado');
       expect(router.navigate).not.toHaveBeenCalled();
       expect(component.isLoading).toBeFalse();
     }));
@@ -136,21 +133,21 @@ describe('LoginComponent', () => {
     });
 
     it('debería ser inválido cuando está vacío', () => {
-      expect(component.loginForm.valid).toBeFalse();
+      expect(component.signupForm.valid).toBeFalse();
     });
 
     it('el campo de email debería ser inválido si no es un email correcto', () => {
-      const email = component.loginForm.get('email');
+      const email = component.signupForm.get('email');
       email?.setValue('test');
       expect(email?.valid).toBeFalse();
     });
 
     it('debería ser válido si todos los campos y validadores son correctos', () => {
-      component.loginForm.setValue({
+      component.signupForm.setValue({
         email: 'test@test.com',
         password: 'Password123!',
       });
-      expect(component.loginForm.valid).toBeTrue();
+      expect(component.signupForm.valid).toBeTrue();
     });
   });
 });

@@ -1,7 +1,7 @@
 <div class="grid grid-cols-1 h-full content-center justify-items-center dark:text-blue-500/80">
   <form
     class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
-    [formGroup]="loginForm"
+    [formGroup]="signupForm"
     (submit)="handleSubmit($event)"
   >
     <label for="email">email</label>
@@ -23,28 +23,16 @@
     <button
       type="submit"
       class="rounded-md border-indigo-500 mt-2 bg-indigo-500 text-white hover:bg-indigo-800 hover:cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-indigo-500"
-      [disabled]="loginForm.status === 'INVALID' || isLoading"
+      [disabled]="signupForm.status === 'INVALID' || isLoading"
     >
-      Iniciar sesión
+      Registrarse
     </button>
 
     <a
-      routerLink="/reset-password"
+      routerLink="/login"
       class="mt-4 text-center text-sm text-indigo-600 hover:text-indigo-800 hover:underline block"
     >
-      Olvidé mi clave
+      Ya tengo una cuenta
     </a>
-
-    <a
-      routerLink="/signup"
-      class="mt-2 text-center text-sm text-indigo-600 hover:text-indigo-800 hover:underline block"
-    >
-      Registrarse
-    </a>
-
-    <span
-      class="text-indigo-600/100 dark:text-indigo-400/100 mt-4 text-center text-sm"
-      >V. {{ version }}</span
-    >
   </form>
 </div>

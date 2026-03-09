@@ -6,6 +6,8 @@ import {
   AuthServiceResetPasswordOutput,
   AuthServiceResetPasswordVerifyInput,
   AuthServiceResetPasswordVerifyOutput,
+  AuthServiceSignUpInput,
+  AuthServiceSignUpOutput,
 } from '../interfaces/services/auth-service';
 import { catchError, Observable, of, switchMap } from 'rxjs';
 import { AuthorizationPath } from '../enums/api/authorization';
@@ -35,6 +37,25 @@ export class AuthService {
           return of(res);
         }),
         catchError(() => of({ message: 'Email o clave invalido' }))
+      );
+  }
+
+  signUp(data: AuthServiceSignUpInput): Observable<AuthServiceSignUpOutput> {
+    return this.requestService
+      .postRequest({
+        path: AuthorizationPath.SIGN_UP,
+        body: data,
+      })
+      .pipe(
+        catchError((err) => {
+          if (err.status === 409) {
+            return of({ message: 'El usuario ya está registrado' });
+          }
+          if (err.status === 500) {
+            return of({ message: 'Error del servidor' });
+          }
+          return of({ message: 'No se pudo registrar el usuario' });
+        })
       );
   }
 
