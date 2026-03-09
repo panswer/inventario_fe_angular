@@ -16,9 +16,9 @@ CompraVentaFe is a project designed to manage product inventory and sales operat
     - [x] Sales Table
     - [x] Sales Detail View
     - [x] Record Sale Form
+- [x] Sign-Up System
 
 ### To-Do List
-- [ ] Sign-Up System
 - [ ] Dashboard with General Product and Sales Information
 
 ## Technologies Used
