@@ -1,13 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ProductService } from '../../../services/product.service';
-import { Product } from '../../../models/product';
 import { CommonModule, Location } from '@angular/common';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
-import { PriceService } from '../../../services/price.service';
-import { SellerItem } from '../../../interfaces/seller-item';
 import { BillService } from '../../../services/bill.service';
 import { CreateBillItemInput } from '../../../interfaces/services/bill-service';
+import { StockService } from '../../../services/stock.service';
+import { StockInterface } from '../../../interfaces/stock';
 
 @Component({
   selector: 'app-create-bill',
@@ -16,192 +14,112 @@ import { CreateBillItemInput } from '../../../interfaces/services/bill-service';
   styleUrl: './create-bill.component.css'
 })
 export class CreateBillComponent implements OnInit {
-  allProducts: Product[] = [];
-  products: Product[] = [];
-  sellers: SellerItem[] = [];
+  allStocks: StockInterface[] = [];
+  availableStocks: StockInterface[] = [];
 
   controllersForm = {
-    product: new FormControl<string>('', [Validators.required]),
-    count: new FormControl<number>(0, [Validators.required, Validators.min(1)]),
-    subTotal: new FormControl<number>(0),
+    stock: new FormControl<string>('', [Validators.required]),
+    count: new FormControl<number | null>(null, [Validators.required, Validators.min(1)]),
   };
 
   mainFormGroup = new FormGroup(this.controllersForm);
 
   shoppingCar: FormGroup[] = [];
 
-  total = 0;
-
   constructor(
-    private readonly productService: ProductService,
-    private readonly priceService: PriceService,
     private readonly billService: BillService,
+    private readonly stockService: StockService,
     private readonly location: Location,
   ) { }
 
   ngOnInit(): void {
-    this.loadProducts();
-    this.controllersForm.count.valueChanges.subscribe(this.handlerChangeCount.bind(this));
+    this.loadStocks();
   }
 
-  loadProducts() {
-    this
-      .productService
-      .getAllProducts({})
-      .subscribe(result => {
-        if (result.message) {
-          alert(result.message);
-        }
-
-        this.allProducts = result.products.map(item => new Product(item));
-        this.loadPrices();
-      });
-  }
-
-  async loadPrices(): Promise<void> {
+  loadStocks() {
     this.mainFormGroup.disable();
-    for (const product of this.allProducts) {
-      try {
-        await this.loadPrice(product);
-      } catch (err) {
-        console.group("loadPrices");
-        console.log(err);
-        console.groupEnd();
+    this.stockService.getAllStocks({}).subscribe(result => {
+      if (result.message) {
+        alert(result.message);
       }
-    }
 
-    this.products = this.allProducts;
-    this.mainFormGroup.enable();
-  }
-
-  async loadPrice(product: Product): Promise<void> {
-    return new Promise(res => {
-      this
-        .priceService
-        .getPriceByProductId(product._id)
-        .subscribe(result => {
-          if (result.price) {
-            product.setPrice(result.price);
-          }
-
-          res();
-        })
+      this.allStocks = result.stocks;
+      this.availableStocks = [...this.allStocks];
+      this.mainFormGroup.enable();
     });
   }
 
   syncProductList() {
-    let total = 0;
-    const selectedProducts = this.shoppingCar.map(item => {
-      total += item.value.subTotal;
-      return item.value.product;
-    });
-
-    this.products = this.allProducts.filter(product => !selectedProducts.includes(product._id));
-    this.total = total;
+    const selectedStockIds = this.shoppingCar.map(item => item.value['stockId']);
+    this.availableStocks = this.allStocks.filter(stock => !selectedStockIds.includes(stock._id));
   }
 
   handlerAddProduct() {
-    const { count, product: productId, subTotal } = this.mainFormGroup.value;
-
-    const product = this.allProducts.find(product => product._id === productId);
+    const count = this.mainFormGroup.value['count'];
+    const stockId = this.mainFormGroup.value['stock'];
 
     const countControl = new FormControl(count, [Validators.required, Validators.min(1)]);
-    const subTotalControl = new FormControl(subTotal, [Validators.required]);
     const shoppingItem = new FormGroup({
       count: countControl,
-      product: new FormControl(productId, [Validators.required]),
-      subTotal: subTotalControl,
+      stockId: new FormControl(stockId, [Validators.required]),
     });
-
-    countControl
-      .valueChanges
-      .subscribe((newCount) => {
-        const newValue = newCount ?? 0;
-
-        if (product?.price) {
-          subTotalControl.setValue(newValue * product.price.amount);
-          this.syncProductList();
-        }
-      });
 
     this.shoppingCar.push(shoppingItem);
 
     this.mainFormGroup.setValue({
-      count: 0,
-      product: '',
-      subTotal: 0
+      count: null,
+      stock: '',
     });
     this.syncProductList();
   }
 
-  handlerChangeCount(newValue: any) {
-    const productId = this.controllersForm.product.value;
-
-    if (!productId) {
-      return;
-    }
-
-    const product = this.allProducts.find(product => product._id === productId);
-
-    if (!product?.price) {
-      return;
-    }
-
-    const count = newValue ?? 0;
-
-    this.controllersForm.subTotal.setValue(product.price.amount * count);
-  }
-
   deleteShoppingItem(shopItem: FormGroup) {
-    const { product: productId } = shopItem.value;
-
-    const newShoppingCard = this.shoppingCar.filter(item => item.value.product !== productId)
-
-    this.shoppingCar = newShoppingCard;
-
+    const stockId = shopItem.value['stockId'];
+    this.shoppingCar = this.shoppingCar.filter(item => item.value['stockId'] !== stockId);
     this.syncProductList();
   }
 
   handlerSubmitBill() {
     this.mainFormGroup.disable();
     this.mainFormGroup.setValue({
-      count: 0,
-      product: '',
-      subTotal: 0,
+      count: null,
+      stock: '',
     });
 
     const shoppingItems: CreateBillItemInput[] = this.shoppingCar.map(shopItem => {
-      const product = this.allProducts.find(product => product._id === shopItem.value.product);
-
+      const stockId = shopItem.value['stockId'];
+      const stock = this.allStocks.find(s => s._id === stockId);
       return {
-        coin: product?.price?.coin ?? '',
-        count: shopItem.value.count,
-        price: product?.price?.amount ?? 0,
-        productId: shopItem.value.product,
+        count: shopItem.value['count'],
+        stockId: stockId,
+        coin: stock?.price?.coin ?? 'USD',
       }
     });
 
-    this
-      .billService
-      .createBill({
-        sellers: shoppingItems,
-      })
-      .subscribe(res => {
-        if (res.message) {
-          alert("No se pudo guardar la orden");
-        }
+    this.billService.createBill({ sellers: shoppingItems }).subscribe(res => {
+      if (res.message) {
+        alert("No se pudo guardar la orden");
+      } else {
+        alert("Se guardo la orden");
+      }
 
-        if (!res.message) {
-          alert("Se guardo la orden");
-        }
+      this.shoppingCar = [];
+      this.syncProductList();
+      this.mainFormGroup.enable();
+    });
+  }
 
-        this.shoppingCar = [];
-        this.syncProductList();
-        this.mainFormGroup.enable();
-      })
+  getStockProductName(stockId: string): string {
+    const stock = this.allStocks.find(s => s._id === stockId);
+    return stock?.productId?.name ?? '';
+  }
+
+  getStockCoin(stockId: string): string {
+    const stock = this.allStocks.find(s => s._id === stockId);
+    return stock?.price?.coin ?? '';
   }
 
   handlerBack() {
-    this.location.back()
+    this.location.back();
   }
 }

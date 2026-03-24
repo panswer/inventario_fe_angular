@@ -82,4 +82,8 @@ export class ProductsComponent implements OnInit {
   goToSeller() {
     this.router.navigate(['seller']);
   }
+
+  goToStock() {
+    this.router.navigate(['stock']);
+  }
 }

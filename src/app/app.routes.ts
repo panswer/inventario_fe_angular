@@ -10,6 +10,8 @@ import { ProductDataComponent } from './pages/private/product-data/product-data.
 import { SellersComponent } from './pages/private/sellers/sellers.component';
 import { CreateBillComponent } from './pages/private/create-bill/create-bill.component';
 import { BillDataComponent } from './pages/private/bill-data/bill-data.component';
+import { StocksComponent } from './pages/private/stocks/stocks.component';
+import { StockDataComponent } from './pages/private/stock-data/stock-data.component';
 
 export const routes: Routes = [
   {
@@ -40,6 +42,15 @@ export const routes: Routes = [
         }, {
           path: ':billId',
           component: BillDataComponent,
+        }],
+      }, {
+        path: 'stock',
+        children: [{
+          path: '',
+          component: StocksComponent,
+        }, {
+          path: ':stockId',
+          component: StockDataComponent,
         }],
       }
     ],

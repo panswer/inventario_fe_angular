@@ -99,6 +99,22 @@ export class RequestService {
       )
   }
 
+  patchRequest(params: RequestPutServiceInput): Observable<any> {
+    const uri = `${this.host}${params.path}`;
+    const headers = this.getDefaultHeader();
+
+    return this
+      .http
+      .patch(uri, params.body, { headers })
+      .pipe(
+        catchError((err) => {
+          this.validateStatusResult(err.status);
+
+          return throwError(err);
+        })
+      )
+  }
+
   logout() {
     sessionStorage.removeItem(this.dictionary.authToken);
     this.authorized = '';

@@ -22,4 +22,13 @@ export class TableComponent {
 
   @ContentChild(TableBodyCellDirective, { read: TemplateRef })
   tableBodyCellTemplate?: TemplateRef<any>;
+
+  getNestedValue(obj: Record<string, any>, path: string): any {
+    return path.split('.').reduce((current: any, key: string) => {
+      if (current && typeof current === 'object') {
+        return (current as Record<string, any>)[key];
+      }
+      return current[key];
+    }, obj);
+  }
 }

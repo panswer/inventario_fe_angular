@@ -1,0 +1,91 @@
+<div class="flex h-full justify-center items-center flex-col">
+  @if (isLoading) {
+    <p>Cargando...</p>
+  } @else if (stock) {
+    <div class="flex flex-col border-2 border-indigo-500 rounded-md p-5 gap-4">
+      <div class="flex flex-col">
+        <span class="font-bold">Producto:</span>
+        <span>{{ stock.productId?.name }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="font-bold">Almacén:</span>
+        <span>{{ stock.warehouseId?.name }}</span>
+      </div>
+
+      <div class="flex flex-col">
+        <span class="font-bold">Cantidad:</span>
+        <span [class.text-red-500]="stock.quantity < stock.minQuantity">
+          {{ stock.quantity }}
+        </span>
+      </div>
+
+      @if (stock.price) {
+        <div class="flex flex-col">
+          <span class="font-bold">Precio:</span>
+          <span>{{ stock.price.amount }} {{ stock.price.coin }}</span>
+        </div>
+      }
+
+      <div class="border-t border-indigo-500 pt-4">
+        <span class="font-bold">Editar cantidad mínima:</span>
+        <form [formGroup]="minQuantityForm" class="flex gap-2 mt-2">
+          <input
+            type="number"
+            formControlName="minQuantity"
+            class="border-2 border-indigo-500 rounded-md p-1 w-20"
+            min="0"
+          />
+          <app-button
+            [disable]="minQuantityForm.status === 'INVALID' || isUpdating"
+            (clickEvent)="handlerUpdateMinQuantity()"
+          >
+            Guardar
+          </app-button>
+        </form>
+      </div>
+
+      <div class="border-t border-indigo-500 pt-4">
+        <span class="font-bold">Agregar stock:</span>
+        <form class="flex gap-2 mt-2">
+          <input
+            type="number"
+            [formControl]="stockAmountForm.controls.amount"
+            class="border-2 border-indigo-500 rounded-md p-1 w-20"
+            min="1"
+          />
+          <app-button
+            [disable]="stockAmountForm.status === 'INVALID' || isUpdating"
+            (clickEvent)="handlerAddStock()"
+          >
+            Agregar
+          </app-button>
+        </form>
+      </div>
+
+      <div class="border-t border-indigo-500 pt-4">
+        <span class="font-bold">Quitar stock:</span>
+        <form class="flex gap-2 mt-2">
+          <input
+            type="number"
+            [formControl]="stockAmountForm.controls.amount"
+            class="border-2 border-indigo-500 rounded-md p-1 w-20"
+            min="1"
+          />
+          <app-button
+            [disable]="stockAmountForm.status === 'INVALID' || isUpdating"
+            (clickEvent)="handlerRemoveStock()"
+          >
+            Quitar
+          </app-button>
+        </form>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <app-button (clickEvent)="goBack()">Regresar</app-button>
+    </div>
+  } @else {
+    <p>No se encontró el stock</p>
+  }
+</div>

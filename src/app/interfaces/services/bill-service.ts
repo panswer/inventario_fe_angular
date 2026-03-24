@@ -14,8 +14,7 @@ export interface GetBillsOutput {
 
 export interface CreateBillItemInput {
     count: number;
-    productId: string;
-    price: number;
+    stockId: string;
     coin: string;
 }
 

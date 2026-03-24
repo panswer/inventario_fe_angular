@@ -32,5 +32,5 @@
 </table>
 
 <ng-template #defaultTableBodyCell let-element let-key="key">
-  {{ element[key] }}
+  {{ getNestedValue(element, key) }}
 </ng-template>

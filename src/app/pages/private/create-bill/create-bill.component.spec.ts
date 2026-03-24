@@ -9,53 +9,49 @@ import { of } from 'rxjs';
 import { Location } from '@angular/common';
 
 import { CreateBillComponent } from './create-bill.component';
-import { ProductService } from '../../../services/product.service';
-import { PriceService } from '../../../services/price.service';
+import { StockService } from '../../../services/stock.service';
 import { BillService } from '../../../services/bill.service';
-import { Product } from '../../../models/product';
 
-// Mock data
-const mockProducts = [
-  { _id: 'prod-1', name: 'Laptop', inStock: true },
-  { _id: 'prod-2', name: 'Mouse', inStock: true },
+const mockStocks = [
+  {
+    _id: 'stock-1',
+    quantity: 10,
+    minQuantity: 2,
+    productId: { _id: 'prod-1', name: 'Laptop', inStock: true, categories: [] },
+    warehouseId: { _id: 'wh-1', name: 'Warehouse 1', address: 'Address 1', isEnabled: true },
+    price: { _id: 'price-1', amount: 1200, coin: 'USD', productId: 'prod-1', createdBy: 'user', createdAt: 123, updatedAt: 123 }
+  },
+  {
+    _id: 'stock-2',
+    quantity: 50,
+    minQuantity: 5,
+    productId: { _id: 'prod-2', name: 'Mouse', inStock: true, categories: [] },
+    warehouseId: { _id: 'wh-1', name: 'Warehouse 1', address: 'Address 1', isEnabled: true },
+    price: { _id: 'price-2', amount: 50, coin: 'EUR', productId: 'prod-2', createdBy: 'user', createdAt: 123, updatedAt: 123 }
+  },
 ];
-const mockPrice1 = { _id: 'price-1', amount: 1200, coin: 'USD' };
-const mockPrice2 = { _id: 'price-2', amount: 50, coin: 'USD' };
 
 describe('CreateBillComponent', () => {
   let component: CreateBillComponent;
   let fixture: ComponentFixture<CreateBillComponent>;
-  let productServiceSpy: jasmine.SpyObj<ProductService>;
-  let priceServiceSpy: jasmine.SpyObj<PriceService>;
+  let stockServiceSpy: jasmine.SpyObj<StockService>;
   let billServiceSpy: jasmine.SpyObj<BillService>;
   let locationSpy: jasmine.SpyObj<Location>;
 
   beforeEach(async () => {
-    productServiceSpy = jasmine.createSpyObj('ProductService', [
-      'getAllProducts',
-    ]);
-    priceServiceSpy = jasmine.createSpyObj('PriceService', [
-      'getPriceByProductId',
-    ]);
+    stockServiceSpy = jasmine.createSpyObj('StockService', ['getAllStocks']);
     billServiceSpy = jasmine.createSpyObj('BillService', ['createBill']);
     locationSpy = jasmine.createSpyObj('Location', ['back']);
 
-    // Configurar respuestas por defecto
-    productServiceSpy.getAllProducts.and.returnValue(
-      of({ products: mockProducts as any[], total: 2 })
+    stockServiceSpy.getAllStocks.and.returnValue(
+      of({ stocks: mockStocks as any[], total: 2 })
     );
-    priceServiceSpy.getPriceByProductId.and.callFake((id) => {
-      if (id === 'prod-1') return of({ price: mockPrice1 as any });
-      if (id === 'prod-2') return of({ price: mockPrice2 as any });
-      return of({ price: null });
-    });
     billServiceSpy.createBill.and.returnValue(of({}));
 
     await TestBed.configureTestingModule({
       imports: [CreateBillComponent, ReactiveFormsModule],
       providers: [
-        { provide: ProductService, useValue: productServiceSpy },
-        { provide: PriceService, useValue: priceServiceSpy },
+        { provide: StockService, useValue: stockServiceSpy },
         { provide: BillService, useValue: billServiceSpy },
         { provide: Location, useValue: locationSpy },
       ],
@@ -63,34 +59,20 @@ describe('CreateBillComponent', () => {
 
     fixture = TestBed.createComponent(CreateBillComponent);
     component = fixture.componentInstance;
-    // No llamar a detectChanges() aquí para controlar ngOnInit
   });
 
   it('should create', () => {
     expect(component).toBeTruthy();
   });
 
-  it('ngOnInit debería cargar productos y precios', fakeAsync(() => {
+  it('ngOnInit debería cargar stocks', fakeAsync(() => {
     fixture.detectChanges();
-    tick(); // Para que se resuelvan las promesas de loadPrices
+    tick();
 
-    expect(productServiceSpy.getAllProducts).toHaveBeenCalledWith({});
-    expect(component.allProducts.length).toBe(2);
-    expect(component.allProducts[0]).toBeInstanceOf(Product);
-    expect(priceServiceSpy.getPriceByProductId).toHaveBeenCalledWith('prod-1');
-    expect(priceServiceSpy.getPriceByProductId).toHaveBeenCalledWith('prod-2');
-    expect(component.allProducts[0].price?.amount).toBe(1200);
-    expect(component.products.length).toBe(2); // Al inicio, todos están disponibles
+    expect(stockServiceSpy.getAllStocks).toHaveBeenCalledWith({});
+    expect(component.allStocks.length).toBe(2);
+    expect(component.availableStocks.length).toBe(2);
   }));
-
-  it('handlerChangeCount debería actualizar el subtotal', () => {
-    fixture.detectChanges(); // Carga los productos
-
-    component.mainFormGroup.controls.product.setValue('prod-1');
-    component.mainFormGroup.controls.count.setValue(3);
-
-    expect(component.mainFormGroup.controls.subTotal.value).toBe(3600); // 3 * 1200
-  });
 
   describe('Manejo del carrito de compras', () => {
     beforeEach(fakeAsync(() => {
@@ -98,57 +80,39 @@ describe('CreateBillComponent', () => {
       tick();
     }));
 
-    it('handlerAddProduct debería agregar un producto al carrito y actualizar la lista', () => {
+    it('handlerAddProduct debería agregar un stock al carrito y actualizar la lista', () => {
       component.mainFormGroup.patchValue({
-        product: 'prod-1',
+        stock: 'stock-1',
         count: 2,
-        subTotal: 2400,
       });
 
       component.handlerAddProduct();
 
       expect(component.shoppingCar.length).toBe(1);
-      expect(component.shoppingCar[0].value.product).toBe('prod-1');
-      expect(component.total).toBe(2400);
-      expect(component.products.length).toBe(1); // Solo queda el mouse
-      expect(component.products[0]._id).toBe('prod-2');
+      expect(component.shoppingCar[0].value['stockId']).toBe('stock-1');
+      expect(component.availableStocks.length).toBe(1);
+      expect(component.availableStocks[0]._id).toBe('stock-2');
       expect(component.mainFormGroup.value).toEqual({
-        product: '',
-        count: 0,
-        subTotal: 0,
+        stock: '',
+        count: null,
       });
     });
 
-    it('deleteShoppingItem debería eliminar un producto del carrito', () => {
-      // Añadir dos productos
-      component.mainFormGroup.patchValue({ product: 'prod-1', count: 1, subTotal: 1200 });
+    it('deleteShoppingItem debería eliminar un stock del carrito', () => {
+      component.mainFormGroup.patchValue({ stock: 'stock-1', count: 1 });
       component.handlerAddProduct();
-      component.mainFormGroup.patchValue({ product: 'prod-2', count: 2, subTotal: 100 });
+      component.mainFormGroup.patchValue({ stock: 'stock-2', count: 2 });
       component.handlerAddProduct();
 
       expect(component.shoppingCar.length).toBe(2);
-      expect(component.total).toBe(1300);
 
-      // Eliminar el primer producto
       const itemToDelete = component.shoppingCar[0];
       component.deleteShoppingItem(itemToDelete);
 
       expect(component.shoppingCar.length).toBe(1);
-      expect(component.shoppingCar[0].value.product).toBe('prod-2');
-      expect(component.total).toBe(100);
-      expect(component.products.length).toBe(1); // Vuelve a estar disponible el prod-1
-      expect(component.products[0]._id).toBe('prod-1');
-    });
-
-    it('cambiar la cantidad en un item del carrito debería actualizar el total', () => {
-      component.mainFormGroup.patchValue({ product: 'prod-1', count: 1, subTotal: 1200 });
-      component.handlerAddProduct();
-
-      const shoppingItem = component.shoppingCar[0];
-      shoppingItem.controls['count'].setValue(3);
-
-      expect(shoppingItem.controls['subTotal'].value).toBe(3600);
-      expect(component.total).toBe(3600);
+      expect(component.shoppingCar[0].value['stockId']).toBe('stock-2');
+      expect(component.availableStocks.length).toBe(1);
+      expect(component.availableStocks[0]._id).toBe('stock-1');
     });
   });
 
@@ -156,8 +120,7 @@ describe('CreateBillComponent', () => {
     beforeEach(fakeAsync(() => {
       fixture.detectChanges();
       tick();
-      // Añadir un item al carrito
-      component.mainFormGroup.patchValue({ product: 'prod-1', count: 2, subTotal: 2400 });
+      component.mainFormGroup.patchValue({ stock: 'stock-1', count: 2 });
       component.handlerAddProduct();
     }));
 
@@ -166,7 +129,7 @@ describe('CreateBillComponent', () => {
 
       const expectedPayload = {
         sellers: [
-          { productId: 'prod-1', count: 2, price: 1200, coin: 'USD' },
+          { stockId: 'stock-1', count: 2, coin: 'USD' },
         ],
       };
       expect(billServiceSpy.createBill).toHaveBeenCalledWith(expectedPayload);
@@ -174,14 +137,13 @@ describe('CreateBillComponent', () => {
 
     it('debería mostrar alerta de éxito, limpiar el carrito y habilitar el form si no hay mensaje de error', fakeAsync(() => {
       spyOn(window, 'alert');
-      billServiceSpy.createBill.and.returnValue(of({})); // Respuesta exitosa
+      billServiceSpy.createBill.and.returnValue(of({}));
 
       component.handlerSubmitBill();
       tick();
 
       expect(window.alert).toHaveBeenCalledWith('Se guardo la orden');
       expect(component.shoppingCar.length).toBe(0);
-      expect(component.total).toBe(0);
       expect(component.mainFormGroup.enabled).toBeTrue();
     }));
 
@@ -193,8 +155,16 @@ describe('CreateBillComponent', () => {
       tick();
 
       expect(window.alert).toHaveBeenCalledWith('No se pudo guardar la orden');
-      expect(component.mainFormGroup.enabled).toBeTrue(); // Se debe re-habilitar
+      expect(component.mainFormGroup.enabled).toBeTrue();
     }));
+  });
+
+  it('getStockProductName debería retornar el nombre del producto', () => {
+    fixture.detectChanges();
+    
+    expect(component.getStockProductName('stock-1')).toBe('Laptop');
+    expect(component.getStockProductName('stock-2')).toBe('Mouse');
+    expect(component.getStockProductName('invalid')).toBe('');
   });
 
   it('handlerBack debería llamar a location.back', () => {
