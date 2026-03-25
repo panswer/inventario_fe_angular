@@ -5,6 +5,8 @@ import { ProductService } from '../../../services/product.service';
 import { Product } from '../../../models/product';
 import { PriceService } from '../../../services/price.service';
 import { Price } from '../../../models/price';
+import { StockService } from '../../../services/stock.service';
+import { StockInterface } from '../../../interfaces/stock';
 import { map } from 'rxjs';
 import { Location } from '@angular/common';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
@@ -19,8 +21,10 @@ export class ProductDataComponent implements OnInit {
   private productId = "";
   private product: Product | undefined;
   private price: Price | undefined;
+  private stock: StockInterface | undefined;
 
   isLoading = true;
+  isUpdatingStock = false;
   productForm = new FormGroup({
     name: new FormControl("", [Validators.required, Validators.minLength(2)]),
     inStock: new FormControl(false, [Validators.required]),
@@ -30,17 +34,37 @@ export class ProductDataComponent implements OnInit {
     coin: new FormControl('', [Validators.required]),
   });
   coinList: string[] = [];
+  selectedImage: File | null = null;
+  imagePreview: string | null = null;
+
+  minQuantityForm = new FormGroup({
+    minQuantity: new FormControl<number>(0, [Validators.required, Validators.min(0)]),
+  });
+  stockAmountForm = new FormGroup({
+    amount: new FormControl<number>(1, [Validators.required, Validators.min(1)]),
+  });
 
   constructor(
     private activatedRoute: ActivatedRoute,
     private productService: ProductService,
     private priceService: PriceService,
+    private stockService: StockService,
     private location: Location,
   ) { }
 
   ngOnInit(): void {
     this.productId = this.activatedRoute.snapshot.paramMap.get('productId') || "";
     this.loadProduct();
+    this.loadStock();
+  }
+
+  loadStock(): void {
+    this.stockService.getStockByProductId({ productId: this.productId }).subscribe((res) => {
+      if (res.stock) {
+        this.stock = res.stock;
+        this.minQuantityForm.setValue({ minQuantity: res.stock.minQuantity });
+      }
+    });
   }
 
   loadProduct() {
@@ -111,16 +135,20 @@ export class ProductDataComponent implements OnInit {
 
     this
       .productService
-      .updateProductById({
-        data: {
-          inStock: inStock ?? this.product.inStock,
-          name: name || this.product.name,
+      .updateProductById(
+        {
+          data: {
+            inStock: inStock ?? this.product.inStock,
+            name: name || this.product.name,
+          },
+          productId: this.productId,
         },
-        productId: this.productId,
-      })
+        this.selectedImage ?? undefined
+      )
       .subscribe((result) => {
         if (result.product) {
           this.product = new Product(result.product);
+          this.selectedImage = null;
         }
 
         if (result.message) {
@@ -129,6 +157,34 @@ export class ProductDataComponent implements OnInit {
 
         this.isLoading = false;
       });
+  }
+
+  handlerFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/svg+xml'];
+      const maxSize = 2 * 1024 * 1024;
+
+      if (!validTypes.includes(file.type)) {
+        alert('Tipo de archivo no válido. Solo se permiten JPG, JPEG y SVG.');
+        input.value = '';
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert('El archivo excede el límite de 2MB.');
+        input.value = '';
+        return;
+      }
+
+      this.selectedImage = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   handlerSubmitPrice() {
@@ -159,5 +215,82 @@ export class ProductDataComponent implements OnInit {
 
         this.isLoading = false;
       })
+  }
+
+  handlerUpdateMinQuantity(): void {
+    if (this.minQuantityForm.status !== 'VALID' || !this.stock) {
+      return;
+    }
+
+    this.isUpdatingStock = true;
+    const minQuantity = this.minQuantityForm.value.minQuantity ?? this.stock.minQuantity;
+
+    this.stockService.updateStockMinQuantity({
+      stockId: this.stock._id,
+      minQuantity,
+    }).subscribe((res) => {
+      if (res.stock) {
+        this.stock = res.stock;
+        alert('Cantidad mínima actualizada');
+      }
+
+      if (res.message) {
+        alert(res.message);
+      }
+
+      this.isUpdatingStock = false;
+    });
+  }
+
+  handlerAddStock(): void {
+    if (this.stockAmountForm.status !== 'VALID' || !this.stock) {
+      return;
+    }
+
+    this.isUpdatingStock = true;
+    const amount = this.stockAmountForm.value.amount ?? 1;
+
+    this.stockService.addStockAmount({
+      stockId: this.stock._id,
+      amount,
+    }).subscribe((res) => {
+      if (res.stock) {
+        this.stock = res.stock;
+        this.stockAmountForm.setValue({ amount: 1 });
+        alert('Stock agregado');
+      }
+
+      if (res.message) {
+        alert(res.message);
+      }
+
+      this.isUpdatingStock = false;
+    });
+  }
+
+  handlerRemoveStock(): void {
+    if (this.stockAmountForm.status !== 'VALID' || !this.stock) {
+      return;
+    }
+
+    this.isUpdatingStock = true;
+    const amount = this.stockAmountForm.value.amount ?? 1;
+
+    this.stockService.removeStockAmount({
+      stockId: this.stock._id,
+      amount,
+    }).subscribe((res) => {
+      if (res.stock) {
+        this.stock = res.stock;
+        this.stockAmountForm.setValue({ amount: 1 });
+        alert('Stock quitado');
+      }
+
+      if (res.message) {
+        alert(res.message);
+      }
+
+      this.isUpdatingStock = false;
+    });
   }
 }

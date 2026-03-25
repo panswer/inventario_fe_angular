@@ -4,6 +4,7 @@ import {
   GetAllProductsInput,
   GetAllProductsOutput,
   GetProductByIdOutput,
+  UpdateProductByIdData,
   UpdateProductByIdInput,
   UpdateProductByIdOutput,
 } from '../interfaces/services/product-service';
@@ -52,11 +53,24 @@ export class ProductService {
       );
   }
 
-  createProduct(newProduct: CreateProduct): Observable<CreateProductResult> {
+  createProduct(newProduct: CreateProduct, image?: File): Observable<CreateProductResult> {
+    let body: FormData | CreateProduct;
+
+    if (image) {
+      const formData = new FormData();
+      formData.append('name', newProduct.name);
+      formData.append('amount', String(newProduct.amount));
+      formData.append('coin', newProduct.coin);
+      formData.append('image', image);
+      body = formData;
+    } else {
+      body = newProduct;
+    }
+
     return this.requestService
       .postRequest({
         path: '/product',
-        body: newProduct,
+        body,
       })
       .pipe(
         switchMap((value: CreateProductResultInterface) => {
@@ -84,12 +98,24 @@ export class ProductService {
       )
   }
 
-  updateProductById(data: UpdateProductByIdInput): Observable<UpdateProductByIdOutput> {
+  updateProductById(data: UpdateProductByIdInput, image?: File): Observable<UpdateProductByIdOutput> {
+    let body: FormData | UpdateProductByIdData;
+
+    if (image) {
+      const formData = new FormData();
+      if (data.data.name) formData.append('name', data.data.name);
+      formData.append('inStock', String(data.data.inStock));
+      formData.append('image', image);
+      body = formData;
+    } else {
+      body = data.data;
+    }
+
     return this
       .requestService
       .putRequest({
         path: `/product/${data.productId}`,
-        body: data.data
+        body
       })
       .pipe(
         catchError(() => of({ message: "No se pudo actualizar el producto" }))

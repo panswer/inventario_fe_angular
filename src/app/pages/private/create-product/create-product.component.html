@@ -36,6 +36,20 @@
       </option>
     </select>
 
+    <label for="image">imagen (opcional)</label>
+    <input
+      type="file"
+      name="image"
+      id="image"
+      accept="image/jpeg,image/jpg,image/svg+xml"
+      (change)="handlerFileSelect($event)"
+      class="border-2 border-indigo-500 rounded-md"
+    />
+
+    @if (imagePreview) {
+      <img [src]="imagePreview" alt="Preview" class="w-32 h-32 object-cover mt-2" />
+    }
+
     <div class="flex justify-around">
       <app-button (clickEvent)="goBack()">regresar</app-button>
       <app-button

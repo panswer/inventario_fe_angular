@@ -21,6 +21,8 @@ import { PriceService } from '../../../services/price.service';
 export class CreateProductComponent implements OnInit {
   isLoading = true;
   coinList: string[] = [];
+  selectedImage: File | null = null;
+  imagePreview: string | null = null;
 
   productForm = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.minLength(3)]),
@@ -56,22 +58,54 @@ export class CreateProductComponent implements OnInit {
 
     const { amount, coin, name } = this.productForm.value as CreateProduct;
     this.productService
-      .createProduct({
-        amount,
-        coin,
-        name,
-      })
+      .createProduct(
+        {
+          amount,
+          coin,
+          name,
+        },
+        this.selectedImage ?? undefined
+      )
       .subscribe((result) => {
         if (result.message) {
           alert(result.message);
         } else {
-          // Solo se considera éxito si no hay mensaje de error
           this.productForm.reset({ name: '', amount: 0, coin: '' });
+          this.selectedImage = null;
+          this.imagePreview = null;
           alert('Se creo el producto');
         }
 
         this.isLoading = false;
       });
+  }
+
+  handlerFileSelect(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+      const validTypes = ['image/jpeg', 'image/jpg', 'image/svg+xml'];
+      const maxSize = 2 * 1024 * 1024;
+
+      if (!validTypes.includes(file.type)) {
+        alert('Tipo de archivo no válido. Solo se permiten JPG, JPEG y SVG.');
+        input.value = '';
+        return;
+      }
+
+      if (file.size > maxSize) {
+        alert('El archivo excede el límite de 2MB.');
+        input.value = '';
+        return;
+      }
+
+      this.selectedImage = file;
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.imagePreview = reader.result as string;
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   goBack() {

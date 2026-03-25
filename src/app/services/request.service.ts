@@ -25,11 +25,14 @@ export class RequestService {
 
   constructor() { }
 
-  private getDefaultHeader(): Record<string, string> {
+  private getDefaultHeader(isFormData: boolean = false): Record<string, string> {
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
       Accept: 'application/json',
     };
+
+    if (!isFormData) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     if (this.authorized) {
       headers[this.dictionary.authToken] = `Bearer ${this.authorized}`;
@@ -72,7 +75,8 @@ export class RequestService {
 
   postRequest(params: RequestPostServiceInput): Observable<any> {
     const uri = `${this.host}${params.path}`;
-    const headers = this.getDefaultHeader();
+    const isFormData = params.body instanceof FormData;
+    const headers = this.getDefaultHeader(isFormData);
 
     return this.http.post(uri, params.body, { headers }).pipe(
       catchError((err) => {
@@ -85,7 +89,8 @@ export class RequestService {
 
   putRequest(params: RequestPutServiceInput): Observable<any> {
     const uri = `${this.host}${params.path}`;
-    const headers = this.getDefaultHeader();
+    const isFormData = params.body instanceof FormData;
+    const headers = this.getDefaultHeader(isFormData);
 
     return this
       .http
