@@ -13,6 +13,7 @@ import { BillDataComponent } from './pages/private/bill-data/bill-data.component
 import { StocksComponent } from './pages/private/stocks/stocks.component';
 import { StockDataComponent } from './pages/private/stock-data/stock-data.component';
 import { ReportsComponent } from './pages/private/reports/reports.component';
+import { UsersComponent } from './pages/private/users/users.component';
 
 export const routes: Routes = [
   {
@@ -57,6 +58,10 @@ export const routes: Routes = [
       {
         path: 'report',
         component: ReportsComponent,
+      },
+      {
+        path: 'users',
+        component: UsersComponent,
       }
     ],
     canActivateChild: [authGuard],

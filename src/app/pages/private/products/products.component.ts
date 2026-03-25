@@ -90,4 +90,8 @@ export class ProductsComponent implements OnInit {
   goToReports() {
     this.router.navigate(['report']);
   }
+
+  goToUsers() {
+    this.router.navigate(['users']);
+  }
 }
