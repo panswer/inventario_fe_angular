@@ -1,0 +1,118 @@
+<div class="flex h-full justify-center pt-5">
+  <div class="flex flex-col items-center">
+    <div class="mb-4 self-start">
+      <app-button (clickEvent)="goBack()">Regresar</app-button>
+    </div>
+    <div class="flex border-b border-indigo-500 mb-4">
+      <button
+        class="px-4 py-2 font-semibold transition-colors"
+        [class.border-b-2]="activeTab === 'movements'"
+        [class.border-indigo-500]="activeTab === 'movements'"
+        [class.text-indigo-600]="activeTab === 'movements'"
+        [class.text-gray-500]="activeTab !== 'movements'"
+        (click)="setActiveTab('movements')"
+      >
+        Historial de Movimientos
+      </button>
+      <button
+        class="px-4 py-2 font-semibold transition-colors"
+        [class.border-b-2]="activeTab === 'summary'"
+        [class.border-indigo-500]="activeTab === 'summary'"
+        [class.text-indigo-600]="activeTab === 'summary'"
+        [class.text-gray-500]="activeTab !== 'summary'"
+        (click)="setActiveTab('summary')"
+      >
+        Resumen de Movimientos
+      </button>
+      <button
+        class="px-4 py-2 font-semibold transition-colors"
+        [class.border-b-2]="activeTab === 'transfers'"
+        [class.border-indigo-500]="activeTab === 'transfers'"
+        [class.text-indigo-600]="activeTab === 'transfers'"
+        [class.text-gray-500]="activeTab !== 'transfers'"
+        (click)="setActiveTab('transfers')"
+      >
+        Transferencias
+      </button>
+    </div>
+
+    <form [formGroup]="reportForm" class="flex flex-col gap-4 max-w-md w-full">
+      <div class="flex flex-col">
+        <label for="productId" class="mb-1 font-medium">Producto</label>
+        <select
+          id="productId"
+          formControlName="productId"
+          class="border-2 border-indigo-500 rounded-md p-2"
+        >
+          <option value="">Todos los productos</option>
+          <option *ngFor="let product of products" [value]="product._id">
+            {{ product.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="flex flex-col">
+        <label for="warehouseId" class="mb-1 font-medium">Almacén</label>
+        <select
+          id="warehouseId"
+          formControlName="warehouseId"
+          class="border-2 border-indigo-500 rounded-md p-2"
+        >
+          <option value="">Todos los almacenes</option>
+          <option *ngFor="let warehouse of warehouses" [value]="warehouse._id">
+            {{ warehouse.name }}
+          </option>
+        </select>
+      </div>
+
+      @if (activeTab === 'movements') {
+        <div class="flex flex-col">
+          <label for="type" class="mb-1 font-medium">Tipo de movimiento</label>
+          <select
+            id="type"
+            formControlName="type"
+            class="border-2 border-indigo-500 rounded-md p-2"
+          >
+            @for (type of movementTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+        </div>
+      }
+
+      <div class="flex gap-4">
+        <div class="flex flex-col flex-1">
+          <label for="startDate" class="mb-1 font-medium">Fecha inicio</label>
+          <input
+            type="date"
+            id="startDate"
+            formControlName="startDate"
+            class="border-2 border-indigo-500 rounded-md p-2"
+          />
+        </div>
+
+        <div class="flex flex-col flex-1">
+          <label for="endDate" class="mb-1 font-medium">Fecha fin</label>
+          <input
+            type="date"
+            id="endDate"
+            formControlName="endDate"
+            class="border-2 border-indigo-500 rounded-md p-2"
+          />
+        </div>
+      </div>
+
+      <div class="mt-4">
+        @if (isLoading) {
+          <div class="flex items-center justify-center p-4">
+            <span class="text-indigo-600 font-medium">Generando reporte...</span>
+          </div>
+        } @else {
+          <app-button (clickEvent)="exportReport()">
+            Exportar a Excel
+          </app-button>
+        }
+      </div>
+    </form>
+  </div>
+</div>

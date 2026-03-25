@@ -12,6 +12,7 @@ import { CreateBillComponent } from './pages/private/create-bill/create-bill.com
 import { BillDataComponent } from './pages/private/bill-data/bill-data.component';
 import { StocksComponent } from './pages/private/stocks/stocks.component';
 import { StockDataComponent } from './pages/private/stock-data/stock-data.component';
+import { ReportsComponent } from './pages/private/reports/reports.component';
 
 export const routes: Routes = [
   {
@@ -52,6 +53,10 @@ export const routes: Routes = [
           path: ':stockId',
           component: StockDataComponent,
         }],
+      },
+      {
+        path: 'report',
+        component: ReportsComponent,
       }
     ],
     canActivateChild: [authGuard],

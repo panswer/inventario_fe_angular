@@ -73,6 +73,31 @@ export class RequestService {
     );
   }
 
+  getBlobRequest(params: RequestServiceInput): Observable<Blob> {
+    let queryStr = '';
+
+    if (params.query) {
+      const urlSearch = new URLSearchParams(params.query);
+      queryStr = urlSearch.toString();
+    }
+
+    let uri = `${this.host}${params.path}`;
+
+    if (queryStr) {
+      uri = uri.concat('?', queryStr);
+    }
+
+    const headers = this.getDefaultHeader();
+
+    return this.http.get(uri, { headers, responseType: 'blob' }).pipe(
+      catchError((err) => {
+        this.validateStatusResult(err.status);
+
+        return throwError(err);
+      })
+    );
+  }
+
   postRequest(params: RequestPostServiceInput): Observable<any> {
     const uri = `${this.host}${params.path}`;
     const isFormData = params.body instanceof FormData;
