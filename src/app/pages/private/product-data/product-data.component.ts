@@ -21,7 +21,7 @@ export class ProductDataComponent implements OnInit {
   private productId = "";
   private product: Product | undefined;
   private price: Price | undefined;
-  private stock: StockInterface | undefined;
+  stock: StockInterface | undefined;
 
   isLoading = true;
   isUpdatingStock = false;
