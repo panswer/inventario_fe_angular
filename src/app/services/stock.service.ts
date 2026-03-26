@@ -12,7 +12,13 @@ import {
   AddStockAmountInput,
   AddStockAmountOutput,
   RemoveStockAmountInput,
-  RemoveStockAmountOutput
+  RemoveStockAmountOutput,
+  TransferStockInput,
+  TransferStockOutput,
+  GetStocksByProductOutput,
+  CreateStockInput,
+  CreateStockOutput,
+  StockInterface
 } from '../interfaces/services/stock-service';
 import { StockPath } from '../enums/api/stock';
 import { RequestService } from './request.service';
@@ -126,6 +132,51 @@ export class StockService {
         catchError(() =>
           of<RemoveStockAmountOutput>({
             message: 'No se pudo quitar stock',
+          })
+        )
+      );
+  }
+
+  transferStock(data: TransferStockInput): Observable<TransferStockOutput> {
+    return this.requestService
+      .postRequest({
+        path: StockPath.TRANSFER,
+        body: data,
+      })
+      .pipe(
+        catchError(() =>
+          of<TransferStockOutput>({
+            message: 'No se pudo realizar la transferencia',
+          })
+        )
+      );
+  }
+
+  getStocksByProduct(productId: string): Observable<GetStocksByProductOutput> {
+    return this.requestService
+      .getRequest({
+        path: `${StockPath.TRANSFER_PRODUCT}/${productId}`,
+      })
+      .pipe(
+        catchError(() =>
+          of<GetStocksByProductOutput>({
+            stocks: [],
+            message: 'No se pudo obtener el stock del producto',
+          })
+        )
+      );
+  }
+
+  createStock(data: CreateStockInput): Observable<CreateStockOutput> {
+    return this.requestService
+      .postRequest({
+        path: StockPath.STOCK,
+        body: data,
+      })
+      .pipe(
+        catchError(() =>
+          of<CreateStockOutput>({
+            message: 'No se pudo crear el stock',
           })
         )
       );

@@ -145,6 +145,19 @@ export class RequestService {
       )
   }
 
+  deleteRequest(params: RequestServiceInput): Observable<any> {
+    const uri = `${this.host}${params.path}`;
+    const headers = this.getDefaultHeader();
+
+    return this.http.delete(uri, { headers }).pipe(
+      catchError((err) => {
+        this.validateStatusResult(err.status);
+
+        return throwError(err);
+      })
+    );
+  }
+
   logout() {
     sessionStorage.removeItem(this.dictionary.authToken);
     this.authorized = '';

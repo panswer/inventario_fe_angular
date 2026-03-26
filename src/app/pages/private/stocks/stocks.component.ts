@@ -77,6 +77,14 @@ export class StocksComponent implements OnInit {
     this.router.navigate(['/seller']);
   }
 
+  goToTransfer(): void {
+    this.router.navigate(['/transfer']);
+  }
+
+  goToAddStock(): void {
+    this.router.navigate(['/stock/add']);
+  }
+
   goToStockDetail(stockId: string): void {
     this.router.navigate(['/stock', stockId]);
   }

@@ -14,6 +14,10 @@ import { StocksComponent } from './pages/private/stocks/stocks.component';
 import { StockDataComponent } from './pages/private/stock-data/stock-data.component';
 import { ReportsComponent } from './pages/private/reports/reports.component';
 import { UsersComponent } from './pages/private/users/users.component';
+import { WarehousesComponent } from './pages/private/warehouses/warehouses.component';
+import { WarehouseFormComponent } from './pages/private/warehouse-form/warehouse-form.component';
+import { TransferComponent } from './pages/private/transfer/transfer.component';
+import { AddStockComponent } from './pages/private/add-stock/add-stock.component';
 
 export const routes: Routes = [
   {
@@ -24,14 +28,17 @@ export const routes: Routes = [
         component: ProductsComponent,
       },
       {
-        path: 'product',
+        path: 'stock',
         children: [{
-          path: 'new',
-          component: CreateProductComponent,
+          path: '',
+          component: StocksComponent,
         }, {
-          path: ':productId',
-          component: ProductDataComponent,
-        }]
+          path: 'add',
+          component: AddStockComponent,
+        }, {
+          path: ':stockId',
+          component: StockDataComponent,
+        }],
       },
       {
         path: 'seller',
@@ -62,7 +69,28 @@ export const routes: Routes = [
       {
         path: 'users',
         component: UsersComponent,
-      }
+      },
+      {
+        path: 'warehouses',
+        children: [
+          {
+            path: '',
+            component: WarehousesComponent,
+          },
+          {
+            path: 'new',
+            component: WarehouseFormComponent,
+          },
+          {
+            path: ':warehouseId',
+            component: WarehouseFormComponent,
+          },
+        ],
+      },
+      {
+        path: 'transfer',
+        component: TransferComponent,
+      },
     ],
     canActivateChild: [authGuard],
   },

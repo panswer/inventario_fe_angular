@@ -1,0 +1,38 @@
+<div class="flex h-full justify-center pt-5">
+  <div class="flex flex-col items-end">
+    <div class="pb-2">
+      <app-button class="pr-2" (clickEvent)="goToProducts()">Productos</app-button>
+      <app-button class="pr-2" (clickEvent)="goToStocks()">Stock</app-button>
+      <app-button class="pr-2" (clickEvent)="goToSellers()">Ventas</app-button>
+      <app-button class="pr-2" (clickEvent)="goToReports()">Reportes</app-button>
+      <app-button class="pr-2" (clickEvent)="goToUsers()">Usuarios</app-button>
+      <app-button (clickEvent)="goToWarehouseForm()">Nuevo Almacén</app-button>
+    </div>
+    <app-table [cols]="tableField" [rows]="warehouses" [total]="warehouseTotal">
+      <ng-template appTableBodyCell let-element let-key="key">
+        <ng-container [ngSwitch]="key">
+          <ng-container *ngSwitchCase="'isEnabled'">
+            <span [class.text-green-600]="element['isEnabled']" [class.text-red-600]="!element['isEnabled']">
+              {{ element['isEnabled'] ? 'Activo' : 'Inactivo' }}
+            </span>
+          </ng-container>
+          <ng-container *ngSwitchCase="'createdAt'">
+            {{ element['createdAt'] | date: 'YYYY-MM-dd HH:mm:ss' }}
+          </ng-container>
+          <ng-container *ngSwitchCase="'actions'">
+            <button class="mr-2" (click)="goToWarehouseDetail(element['_id'])">
+              <fa-icon [icon]="editIcon"></fa-icon>
+            </button>
+            <button (click)="deleteWarehouse(element['_id'])">
+              <fa-icon [icon]="deleteIcon"></fa-icon>
+            </button>
+          </ng-container>
+
+          <ng-container *ngSwitchDefault>
+            <span>{{ element[key] }}</span>
+          </ng-container>
+        </ng-container>
+      </ng-template>
+    </app-table>
+  </div>
+</div>

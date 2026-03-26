@@ -1,0 +1,67 @@
+<div class="flex h-full justify-center pt-5">
+  <div class="add-stock-form">
+    <h2>Agregar Stock</h2>
+
+    <form [formGroup]="stockForm">
+      <div class="form-group">
+        <label for="productId">Producto</label>
+        <select id="productId" formControlName="productId" (change)="onProductChange()">
+          <option value="">Seleccione un producto</option>
+          @for (product of products; track product._id) {
+            <option [value]="product._id">
+              {{ product.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="warehouseId">Almacén</label>
+        <select id="warehouseId" formControlName="warehouseId" (change)="onWarehouseChange()">
+          <option value="">Seleccione un almacén</option>
+          @for (warehouse of warehouses; track warehouse._id) {
+            <option [value]="warehouse._id">
+              {{ warehouse.name }}
+            </option>
+          }
+        </select>
+        @if (currentStock > 0) {
+          <div class="stock-info">
+            Stock actual: {{ currentStock }}
+          </div>
+        } @else {
+          <div class="stock-info">
+            No existe stock para este producto en este almacén
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="quantity">Cantidad a agregar</label>
+        <input
+          type="number"
+          id="quantity"
+          formControlName="quantity"
+          min="1"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="minQuantity">Cantidad mínima (opcional)</label>
+        <input
+          type="number"
+          id="minQuantity"
+          formControlName="minQuantity"
+          min="0"
+        />
+      </div>
+
+      <div class="button-group">
+        <app-button (clickEvent)="onSubmit()">
+          {{ existingStockId ? 'Agregar' : 'Crear' }}
+        </app-button>
+        <app-button (clickEvent)="goBack()">Cancelar</app-button>
+      </div>
+    </form>
+  </div>
+</div>

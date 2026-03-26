@@ -1,0 +1,69 @@
+<div class="flex h-full justify-center pt-5">
+  <div class="transfer-form">
+    <h2>Transferir Stock</h2>
+
+    <form [formGroup]="transferForm">
+      <div class="form-group">
+        <label for="productId">Producto</label>
+        <select id="productId" formControlName="productId" (change)="onProductChange()">
+          <option value="">Seleccione un producto</option>
+          @for (product of products; track product._id) {
+            <option [value]="product._id">
+              {{ product.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="fromWarehouseId">Almacén Origen</label>
+        <select id="fromWarehouseId" formControlName="fromWarehouseId" (change)="onSourceWarehouseChange()">
+          <option value="">Seleccione un almacén</option>
+          @for (stock of stocksByProduct; track stock.warehouseId) {
+            <option [value]="stock.warehouseId">
+              {{ stock.warehouseName }} (Stock: {{ stock.quantity }})
+            </option>
+          }
+        </select>
+        @if (availableStock > 0) {
+          <div class="stock-info">
+            Stock disponible: {{ availableStock }}
+          </div>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="toWarehouseId">Almacén Destino</label>
+        <select id="toWarehouseId" formControlName="toWarehouseId">
+          <option value="">Seleccione un almacén</option>
+          @for (warehouse of warehouses; track warehouse._id) {
+            <option [value]="warehouse._id">
+              {{ warehouse.name }}
+            </option>
+          }
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="quantity">Cantidad</label>
+        <input
+          type="number"
+          id="quantity"
+          formControlName="quantity"
+          min="1"
+          [max]="availableStock"
+        />
+        @if (transferForm.get('quantity')?.errors?.['max']) {
+          <div class="error-text">
+            La cantidad no puede exceder el stock disponible ({{ availableStock }})
+          </div>
+        }
+      </div>
+
+      <div class="button-group">
+        <app-button (clickEvent)="onSubmit()">Transferir</app-button>
+        <app-button (clickEvent)="goBack()">Cancelar</app-button>
+      </div>
+    </form>
+  </div>
+</div>

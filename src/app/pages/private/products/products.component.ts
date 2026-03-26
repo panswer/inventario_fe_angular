@@ -94,4 +94,8 @@ export class ProductsComponent implements OnInit {
   goToUsers() {
     this.router.navigate(['users']);
   }
+
+  goToWarehouses() {
+    this.router.navigate(['warehouses']);
+  }
 }
