@@ -45,9 +45,11 @@
           class="border-2 border-indigo-500 rounded-md p-2"
         >
           <option value="">Todos los productos</option>
-          <option *ngFor="let product of products" [value]="product._id">
-            {{ product.name }}
-          </option>
+          @for (product of products; track product._id) {
+            <option [value]="product._id">
+              {{ product.name }}
+            </option>
+          }
         </select>
       </div>
 
@@ -59,9 +61,11 @@
           class="border-2 border-indigo-500 rounded-md p-2"
         >
           <option value="">Todos los almacenes</option>
-          <option *ngFor="let warehouse of warehouses" [value]="warehouse._id">
-            {{ warehouse.name }}
-          </option>
+          @for (warehouse of warehouses; track warehouse._id) {
+            <option [value]="warehouse._id">
+              {{ warehouse.name }}
+            </option>
+          }
         </select>
       </div>
 

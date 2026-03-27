@@ -31,9 +31,11 @@
       formControlName="coin"
       class="border-2 border-indigo-500 rounded-md"
     >
-      <option *ngFor="let coinType of coinList" [value]="coinType">
-        {{coinType}}
-      </option>
+      @for (coinType of coinList; track coinType) {
+        <option [value]="coinType">
+          {{coinType}}
+        </option>
+      }
     </select>
 
     <label for="image">imagen (opcional)</label>

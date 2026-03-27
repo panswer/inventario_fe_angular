@@ -6,7 +6,6 @@ import {
   Validators,
 } from '@angular/forms';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
-import { NgFor } from '@angular/common';
 import { ProductService } from '../../../services/product.service';
 import { CreateProduct } from '../../../interfaces/create-product';
 import { Router } from '@angular/router';
@@ -14,7 +13,7 @@ import { PriceService } from '../../../services/price.service';
 
 @Component({
   selector: 'app-create-product',
-  imports: [ReactiveFormsModule, ButtonComponent, NgFor],
+  imports: [ReactiveFormsModule, ButtonComponent],
   templateUrl: './create-product.component.html',
   styleUrl: './create-product.component.css',
 })

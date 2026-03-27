@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { ReactiveFormsModule, FormGroup, FormControl } from '@angular/forms';
-import { NgFor, NgIf } from '@angular/common';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
 import { ReportService } from '../../../services/report.service';
 import { ProductService } from '../../../services/product.service';
@@ -12,7 +11,7 @@ import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-reports',
-  imports: [ReactiveFormsModule, ButtonComponent, NgFor, NgIf],
+  imports: [ReactiveFormsModule, ButtonComponent],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css',
 })

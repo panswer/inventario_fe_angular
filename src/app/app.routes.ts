@@ -28,6 +28,19 @@ export const routes: Routes = [
         component: ProductsComponent,
       },
       {
+        path: 'product',
+        children: [
+          {
+            path: 'new',
+            component: CreateProductComponent,
+          },
+          {
+            path: ':productId',
+            component: ProductDataComponent,
+          },
+        ],
+      },
+      {
         path: 'stock',
         children: [{
           path: '',
@@ -53,16 +66,6 @@ export const routes: Routes = [
           component: BillDataComponent,
         }],
       }, {
-        path: 'stock',
-        children: [{
-          path: '',
-          component: StocksComponent,
-        }, {
-          path: ':stockId',
-          component: StockDataComponent,
-        }],
-      },
-      {
         path: 'report',
         component: ReportsComponent,
       },
