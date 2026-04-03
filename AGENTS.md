@@ -25,8 +25,9 @@ npm run build          # Production build
 ### Testing
 ```bash
 npm test               # Run all tests (headless by default)
-ng test --watch       # Run tests in watch mode
+ng test --watch        # Run tests in watch mode
 ng test --include="**/component.spec.ts"   # Run single test file
+ng test --include="**/product.service.spec.ts"   # Run single service test
 ```
 
 ### Type Checking
@@ -37,37 +38,30 @@ npx tsc --noEmit       # Run TypeScript type checking (strict mode)
 ## File Structure
 ```
 src/app/
-├── components/        # Reusable UI components (atoms/, molecules/)
-├── pages/             # Route-level components (public/, private/)
-├── services/          # Angular services (HTTP calls)
-├── models/            # Data model classes
-├── interfaces/        # TypeScript interfaces
-├── enums/             # TypeScript enums
-├── guards/            # Route guards
-├── directives/        # Angular directives
-└── utils/             # Utility functions
+├── components/        # Reusable UI components
+├── pages/            # Route-level components
+├── services/         # Angular services (HTTP calls)
+├── models/           # Data model classes
+├── interfaces/       # TypeScript interfaces
+├── enums/            # TypeScript enums
+├── guards/           # Route guards
+├── directives/       # Angular directives
+└── utils/            # Utility functions
 ```
 
 ## TypeScript Strict Mode
 
-The project uses strict TypeScript with these compiler options:
-- `strict: true` - Enable all strict type checking
-- `noImplicitOverride: true` - Require `override` keyword for overridden methods
-- `noPropertyAccessFromIndexSignature: true` - Require dot notation for known properties
-- `noImplicitReturns: true` - Ensure all code paths return a value
-- `noFallthroughCasesInSwitch: true` - Require break in switch cases
-- `strictInjectionParameters: true` - Strict type checking for DI
-- `strictTemplates: true` - Strict template type checking
+The project uses strict TypeScript:
+- `strict: true`, `noImplicitOverride: true`, `noPropertyAccessFromIndexSignature: true`
+- `noImplicitReturns: true`, `noFallthroughCasesInSwitch: true`
+- `strictInjectionParameters: true`, `strictTemplates: true`
 
 ## Naming Conventions
 
 - **Components**: `kebab-case` selectors, `PascalCase` classes (e.g., `selector: 'app-button'`, `ButtonComponent`)
 - **Files**: `kebab-case` (`.component.ts`, `.service.ts`, `.spec.ts`)
-- **Classes**: `PascalCase`
-- **Variables/Methods**: `camelCase`
-- **Constants**: `UPPER_SNAKE_CASE`
-- **Interfaces**: `PascalCase` with `Interface` suffix when needed (e.g., `ProductInterface`)
-- **Enums**: `PascalCase` with values in `UPPER_SNAKE_CASE`
+- **Classes**: `PascalCase`, **Variables/Methods**: `camelCase`, **Constants**: `UPPER_SNAKE_CASE`
+- **Interfaces**: `PascalCase` (e.g., `ProductInterface`), **Enums**: values in `UPPER_SNAKE_CASE`
 
 ## TypeScript Guidelines
 
@@ -76,6 +70,21 @@ The project uses strict TypeScript with these compiler options:
 - **Avoid `any`**: Use proper types or `unknown` instead
 - **Strict null checks**: Handle null/undefined explicitly
 - **Generics**: Use generics for reusable components and services
+- **Getters/Setters**: Use for computed properties with side effects
+- **Early returns**: Prefer early returns for validation checks
+
+## Code Formatting
+
+- Use 2 spaces for indentation, max line length: 100 characters
+- Use semicolons at end of statements, single quotes for strings
+
+## Imports Order
+
+1. Angular core imports (`@angular/*`)
+2. Third-party libraries
+3. Internal application imports
+
+Use relative paths from file location.
 
 ## Angular Patterns
 
@@ -84,7 +93,7 @@ The project uses strict TypeScript with these compiler options:
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './button.component.html',
   styleUrl: './button.component.css',
 })
@@ -94,7 +103,7 @@ export class ButtonComponent {}
 ### Dependency Injection
 Use `inject()` function instead of constructor injection:
 ```typescript
-private requestService = inject(RequestService);
+private productService = inject(ProductService);
 ```
 
 ### Services
@@ -108,18 +117,10 @@ private requestService = inject(RequestService);
 - Return fallback values (empty arrays, error objects)
 - Use `.withContext()` for better error messages in tests
 
-## Imports Order
-
-1. Angular core imports (`@angular/*`)
-2. Third-party libraries
-3. Internal application imports
-
-Use relative paths from the file location.
-
 ## Templates (HTML)
 
-- Use semantic HTML elements with Tailwind CSS classes
-- Use Angular directives (`*ngIf`, `*ngFor`, `[disabled]`, `(click)`)
+- Use semantic HTML with Tailwind CSS classes
+- Use Angular directives (`[disabled]`, `(click)`, etc.)
 - Keep templates clean; move complex logic to component
 - Use `@if`, `@for` (Angular 17+ control flow) over `*ngIf`, `*ngFor`
 
@@ -129,8 +130,7 @@ Use relative paths from the file location.
 - Use `ComponentFixture` for component testing
 - Create helper components for testing content projection (`ng-content`)
 - Use descriptive test names in Spanish (e.g., `deberia mostrar el boton`)
-- Use `spyOn` for method spying
-- Use `.withContext()` for better error messages
+- Use `spyOn` for method spying, mock HTTP with `HttpTestingController`
 
 ## CSS / Styling
 
@@ -142,12 +142,10 @@ Use relative paths from the file location.
 
 - Define routes in `app.routes.ts`
 - Use lazy loading: `{ path: 'products', loadComponent: () => import('...').then(m => m.ProductsComponent) }`
-- Use guards for protected routes
-- Use `pathMatch: 'full'` for empty path redirects
+- Use guards for protected routes, `pathMatch: 'full'` for empty path redirects
 
 ## Models
 
-Implement interface-based models with constructor parameters:
 ```typescript
 export interface ProductInterface {
   _id: string;
@@ -155,25 +153,17 @@ export interface ProductInterface {
   price: number;
   createdAt?: number;
 }
-
-export class Product implements ProductInterface {
-  constructor(params: ProductInterface) {
-    this._id = params._id;
-    this.name = params.name;
-    this.price = params.price;
-    this.createdAt = params.createdAt ?? Date.now();
-  }
-}
 ```
 
 ## RxJS
 
 - Use `takeUntilDestroyed()` or unsubscribe for subscriptions
-- Use proper operators: `catchError`, `switchMap`, `map`, `tap`, etc.
+- Use operators: `catchError`, `switchMap`, `map`, `tap`, etc.
 - Return `Observable` from service methods
-- Use `BehaviorSubject` for state management when needed
+- Use `async` pipe in templates to handle subscriptions
 
 ## Environment Configuration
 
 - Use `src/environments/environment.ts` and `environment.prod.ts`
 - Custom `set-env.js` script runs before build/serve
+- Never commit secrets or API keys to repository
