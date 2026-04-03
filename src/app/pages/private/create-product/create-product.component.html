@@ -96,8 +96,10 @@
   </form>
 </div>
 
-<app-barcode-scanner
-  [isScanning]="isScanningBarcode"
-  (barcodeScanned)="onBarcodeScanned($event)"
-  (closeScanner)="closeBarcodeScanner()"
-></app-barcode-scanner>
+@if (isScanningBarcode) {
+  <app-barcode-scanner
+    [isScanning]="isScanningBarcode"
+    (barcodeScanned)="onBarcodeScanned($event)"
+    (closeScanner)="closeBarcodeScanner()"
+  ></app-barcode-scanner>
+}

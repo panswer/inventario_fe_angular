@@ -32,3 +32,13 @@ export interface UpdateProductByIdOutput {
   product?: ProductInterface;
   message?: string;
 }
+
+export interface GetProductByBarcodeOutput {
+  product?: ProductInterface;
+  price?: {
+    _id: string;
+    amount: number;
+    coin: string;
+  };
+  message?: string;
+}

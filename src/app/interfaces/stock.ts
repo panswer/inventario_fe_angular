@@ -17,6 +17,7 @@ export interface ProductInfoInterface {
   _id: string;
   name: string;
   inStock: boolean;
+  barcode?: string;
   categories: CategoryInfoInterface[];
 }
 

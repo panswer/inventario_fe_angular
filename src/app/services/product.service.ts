@@ -3,6 +3,7 @@ import { catchError, Observable, of, switchMap } from 'rxjs';
 import {
   GetAllProductsInput,
   GetAllProductsOutput,
+  GetProductByBarcodeOutput,
   GetProductByIdOutput,
   UpdateProductByIdData,
   UpdateProductByIdInput,
@@ -129,6 +130,17 @@ export class ProductService {
       })
       .pipe(
         catchError(() => of({ message: "No se pudo actualizar el producto" }))
+      );
+  }
+
+  getProductByBarcode(barcode: string): Observable<GetProductByBarcodeOutput> {
+    return this
+      .requestService
+      .getRequest({
+        path: `${ProductPath.PRODUCT_BARCODE}/${barcode}`,
+      })
+      .pipe(
+        catchError(() => of({ message: "No se pudo buscar el producto por código de barras" }))
       );
   }
 }

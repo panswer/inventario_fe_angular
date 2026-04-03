@@ -1,11 +1,43 @@
 <div class="flex h-full justify-center items-center flex-col">
   <div class="flex flex-col">
+    <div class="search-barcode flex items-center gap-3 mb-4">
+      <input
+        type="text"
+        name="barcode"
+        id="barcode"
+        class="border-2 border-indigo-500 rounded-md px-3 py-2"
+        placeholder="Código de barras"
+        [formControl]="searchControl"
+        (keyup.enter)="searchByBarcode()"
+      />
+      <app-button (clickEvent)="searchByBarcode()">Buscar</app-button>
+      <app-button (clickEvent)="startScanner()">Escanear</app-button>
+    </div>
+
+    @if (searchedProduct) {
+      <div class="search-result bg-gray-100 p-4 rounded-md mb-4">
+        <p><strong>Producto:</strong> {{ searchedProduct.product.name }}</p>
+        <p><strong>Precio:</strong> {{ searchedProduct.price.amount }} {{ searchedProduct.price.coin }}</p>
+        <div class="flex items-center gap-3 mt-2">
+          <input
+            type="number"
+            name="searchCount"
+            class="border-2 border-indigo-500 rounded-md px-3 py-2"
+            placeholder="cantidad"
+            [formControl]="searchedProductCount"
+          />
+          <app-button (clickEvent)="addSearchedProductToCart()">agregar</app-button>
+          <app-button (clickEvent)="clearSearch()">cancelar</app-button>
+        </div>
+      </div>
+    }
+
     <form [formGroup]="mainFormGroup">
       <div class="add-control flex items-center gap-3">
         <select
           name="stocks"
           id="stocks"
-          class="border-2 border-indigo-500 rounded-md"
+          class="border-2 border-indigo-500 rounded-md px-3 py-2"
           placeholder="producto"
           formControlName="stock"
         >
@@ -19,7 +51,7 @@
           type="number"
           name=""
           id="count"
-          class="border-2 border-indigo-500 rounded-md"
+          class="border-2 border-indigo-500 rounded-md px-3 py-2"
           placeholder="cantidad"
           formControlName="count"
         />
@@ -27,14 +59,17 @@
       </div>
     </form>
 
-    <ul class="seller_list-container">
+    <ul class="seller_list-container mt-4">
       @for (shopItem of shoppingCar; track shopItem) {
-        <li class="seller_item-content" [formGroup]="shopItem">
-          <span>{{ getStockProductName(shopItem.value['stockId']) }}</span>
+        <li class="seller_item-content flex items-center gap-3 py-2" [formGroup]="shopItem">
+          <span class="flex-1">{{ getStockProductName(shopItem.value['stockId']) }}</span>
+          <span class="w-20 text-right">{{ getStockPrice(shopItem.value['stockId']) }} {{ getStockCoin(shopItem.value['stockId']) }}</span>
+          <span class="w-16 text-center">x{{ shopItem.value['count'] }}</span>
+          <span class="w-24 text-right font-semibold">{{ getItemSubtotal(shopItem.value['stockId']) }} {{ getStockCoin(shopItem.value['stockId']) }}</span>
           <input
             type="number"
             name="count"
-            class="border-2 border-indigo-500 rounded-md"
+            class="border-2 border-indigo-500 rounded-md px-2 py-1 w-20"
             placeholder="cantidad"
             formControlName="count"
           />
@@ -43,9 +78,23 @@
       }
     </ul>
 
+    @if (shoppingCar.length > 0) {
+      <div class="total-price mt-4 text-right text-xl font-bold">
+        <span>Total: {{ totalPrice }} {{ getStockCoin(shoppingCar[0].value['stockId']) }}</span>
+      </div>
+    }
+
     <div class="flex w-full flex-row gap-6 justify-end mt-3">
       <app-button (clickEvent)="handlerBack()">regresar</app-button>
       <app-button (clickEvent)="handlerSubmitBill()">Agregar venta</app-button>
     </div>
   </div>
 </div>
+
+@if (isScanning) {
+  <app-barcode-scanner
+    [isScanning]="isScanning"
+    (barcodeScanned)="onBarcodeScanned($event)"
+    (closeScanner)="closeScannerModal()"
+  ></app-barcode-scanner>
+}

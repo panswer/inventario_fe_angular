@@ -1,31 +1,29 @@
-<div class="scanner-overlay" *ngIf="isScanning">
+<div class="scanner-modal-overlay">
   <div class="scanner-modal">
-    <div class="scanner-header">
+    <div class="modal-header">
       <h3>Escanear Código de Barras</h3>
-      <button class="close-btn" (click)="close()">✕</button>
+      <button type="button" class="close-btn" (click)="closeModal()">✕</button>
     </div>
     
-    <div class="scanner-content">
-      @if (isInitializing) {
+    <div class="video-container">
+      @if (isLoading) {
         <div class="loading-message">
           <p>Inicializando cámara...</p>
         </div>
       }
       
-      <div [id]="containerId" class="scanner-container"></div>
-      
-      @if (errorMessage) {
-        <div class="error-message">
-          {{ errorMessage }}
-        </div>
-      }
-      
-      @if (!errorMessage && !isInitializing) {
-        <div class="scanner-instructions">
-          <p>Coloque el código de barras dentro del marco</p>
-          <p class="hint">Si no funciona, verifique que la cámara no esté siendo usada por otra app</p>
-        </div>
-      }
+      <div #scannerContainer class="scanner-target"></div>
     </div>
+
+    @if (errorMessage) {
+      <div class="error-message">{{ errorMessage }}</div>
+    }
+
+    @if (isCameraActive) {
+      <div class="instructions">
+        <p>Posicione el código de barras dentro del marco</p>
+        <p class="hint">El escaneo es automático</p>
+      </div>
+    }
   </div>
 </div>
