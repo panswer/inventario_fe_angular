@@ -80,6 +80,7 @@ describe('CreateProductComponent', () => {
         name: 'Test Product',
         amount: 100,
         coin: 'USD',
+        barcode: '',
       });
 
       component.handlerSubmit();
@@ -88,12 +89,14 @@ describe('CreateProductComponent', () => {
         name: 'Test Product',
         amount: 100,
         coin: 'USD',
+        barcode: undefined,
+        categories: undefined,
       });
 
       tick(); // Simula el paso del tiempo para el observable
 
       expect(window.alert).toHaveBeenCalledWith('Se creo el producto');
-      expect(component.productForm.value).toEqual({ name: '', amount: 0, coin: '' });
+      expect(component.productForm.value).toEqual({ name: '', amount: 0, coin: '', barcode: '' });
       expect(component.isLoading).toBeFalse();
     }));
 
@@ -107,6 +110,7 @@ describe('CreateProductComponent', () => {
         name: 'Test Product',
         amount: 100,
         coin: 'USD',
+        barcode: '',
       });
 
       component.handlerSubmit();

@@ -15,6 +15,25 @@
       [disabled]="isLoading"
     />
 
+    <label for="barcode">Código de barras (opcional)</label>
+    <div class="flex gap-2">
+      <input
+        type="text"
+        name="barcode"
+        id="barcode"
+        formControlName="barcode"
+        class="border-2 border-indigo-500 rounded-md flex-1"
+        [disabled]="isLoading"
+      />
+      <button
+        type="button"
+        class="px-3 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
+        (click)="startBarcodeScanner()"
+      >
+        📷
+      </button>
+    </div>
+
     <label for="inStock" class="inStock">Mostrar</label>
     <input
       type="checkbox"
@@ -23,6 +42,22 @@
       formControlName="inStock"
       [disabled]="isLoading"
     />
+
+    <label for="categories">categorías (opcional)</label>
+    <div class="categories-list max-h-32 overflow-y-auto border-2 border-indigo-500 rounded-md p-2">
+      @for (category of categoryList; track category._id) {
+        <div class="flex items-center gap-2">
+          <input
+            type="checkbox"
+            [id]="'cat-' + category._id"
+            [checked]="isCategorySelected(category._id)"
+            (change)="toggleCategory(category._id)"
+            [disabled]="isLoading"
+          />
+          <label [for]="'cat-' + category._id">{{ category.name }}</label>
+        </div>
+      }
+    </div>
 
     <label for="image">imagen (opcional)</label>
     <input
@@ -145,3 +180,9 @@
     </form>
   }
 </div>
+
+<app-barcode-scanner
+  [isScanning]="isScanningBarcode"
+  (barcodeScanned)="onBarcodeScanned($event)"
+  (closeScanner)="closeBarcodeScanner()"
+></app-barcode-scanner>

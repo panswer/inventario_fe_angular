@@ -1,3 +1,5 @@
+import { CategoryInterface } from './category';
+
 export interface ProductInterface {
   _id: string;
   name: string;
@@ -5,4 +7,6 @@ export interface ProductInterface {
   createdBy: string;
   createdAt: number;
   updatedAt: number;
+  barcode?: string;
+  categories?: CategoryInterface[];
 }

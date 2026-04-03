@@ -1,4 +1,5 @@
 import { ProductInterface } from '../interfaces/product';
+import { Category } from './category';
 import { Price } from './price';
 
 export class Product implements ProductInterface {
@@ -8,6 +9,8 @@ export class Product implements ProductInterface {
   inStock: boolean;
   name: string;
   updatedAt: number;
+  barcode?: string;
+  categories?: Category[];
   price?: Price;
 
   constructor(params: ProductInterface) {
@@ -17,9 +20,17 @@ export class Product implements ProductInterface {
     this.inStock = params.inStock;
     this.name = params.name;
     this.updatedAt = params.updatedAt;
+    this.barcode = params.barcode;
+    this.categories = params.categories?.map(
+      (cat) => new Category(cat)
+    );
   }
 
   setPrice(price: Price): void {
     this.price = price;
+  }
+
+  getCategoryIds(): string[] {
+    return this.categories?.map((cat) => cat._id) ?? [];
   }
 }

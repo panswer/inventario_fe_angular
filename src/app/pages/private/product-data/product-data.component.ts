@@ -7,13 +7,16 @@ import { PriceService } from '../../../services/price.service';
 import { Price } from '../../../models/price';
 import { StockService } from '../../../services/stock.service';
 import { StockInterface } from '../../../interfaces/stock';
+import { CategoryService } from '../../../services/category.service';
+import { Category } from '../../../models/category';
 import { map } from 'rxjs';
 import { Location } from '@angular/common';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
+import { BarcodeScannerComponent } from '../../../components/molecules/barcode-scanner/barcode-scanner.component';
 
 @Component({
   selector: 'app-product-data',
-  imports: [ReactiveFormsModule, ButtonComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, BarcodeScannerComponent],
   templateUrl: './product-data.component.html',
   styleUrl: './product-data.component.css'
 })
@@ -25,9 +28,14 @@ export class ProductDataComponent implements OnInit {
 
   isLoading = true;
   isUpdatingStock = false;
+  categoryList: Category[] = [];
+  selectedCategories: string[] = [];
+  isScanningBarcode = false;
+  
   productForm = new FormGroup({
     name: new FormControl("", [Validators.required, Validators.minLength(2)]),
     inStock: new FormControl(false, [Validators.required]),
+    barcode: new FormControl("", []),
   });
   priceForm = new FormGroup({
     amount: new FormControl(0, [Validators.required, Validators.min(0.01)]),
@@ -49,6 +57,7 @@ export class ProductDataComponent implements OnInit {
     private productService: ProductService,
     private priceService: PriceService,
     private stockService: StockService,
+    private categoryService: CategoryService,
     private location: Location,
   ) { }
 
@@ -56,6 +65,9 @@ export class ProductDataComponent implements OnInit {
     this.productId = this.activatedRoute.snapshot.paramMap.get('productId') || "";
     this.loadProduct();
     this.loadStock();
+    this.categoryService.getAllCategories().subscribe((categories) => {
+      this.categoryList = categories;
+    });
   }
 
   loadStock(): void {
@@ -77,7 +89,9 @@ export class ProductDataComponent implements OnInit {
           this.productForm.setValue({
             name: this.product.name,
             inStock: this.product.inStock,
+            barcode: this.product.barcode || '',
           });
+          this.selectedCategories = this.product.getCategoryIds();
           this.loadPrice();
         }
 
@@ -131,7 +145,7 @@ export class ProductDataComponent implements OnInit {
     }
 
     this.isLoading = true;
-    const { inStock, name } = this.productForm.value;
+    const { inStock, name, barcode } = this.productForm.value;
 
     this
       .productService
@@ -140,6 +154,8 @@ export class ProductDataComponent implements OnInit {
           data: {
             inStock: inStock ?? this.product.inStock,
             name: name || this.product.name,
+            barcode: barcode || undefined,
+            categories: this.selectedCategories.length > 0 ? this.selectedCategories : undefined,
           },
           productId: this.productId,
         },
@@ -157,6 +173,33 @@ export class ProductDataComponent implements OnInit {
 
         this.isLoading = false;
       });
+  }
+
+  toggleCategory(categoryId: string): void {
+    const index = this.selectedCategories.indexOf(categoryId);
+    if (index > -1) {
+      this.selectedCategories.splice(index, 1);
+    } else {
+      this.selectedCategories.push(categoryId);
+    }
+  }
+
+  isCategorySelected(categoryId: string): boolean {
+    return this.selectedCategories.includes(categoryId);
+  }
+
+  startBarcodeScanner(): void {
+    this.isScanningBarcode = true;
+  }
+
+  onBarcodeScanned(barcode: string): void {
+    this.productForm.patchValue({ barcode });
+    this.isScanningBarcode = false;
+    alert(`Código de barras escaneado: ${barcode}`);
+  }
+
+  closeBarcodeScanner(): void {
+    this.isScanningBarcode = false;
   }
 
   handlerFileSelect(event: Event): void {

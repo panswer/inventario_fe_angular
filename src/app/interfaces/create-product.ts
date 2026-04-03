@@ -7,6 +7,8 @@ export interface CreateProduct {
   name: string;
   amount: number;
   coin: string;
+  barcode?: string;
+  categories?: string[];
 }
 
 export interface CreateProductResultInterface {

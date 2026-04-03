@@ -19,6 +19,8 @@ export interface GetProductByIdOutput {
 export interface UpdateProductByIdData {
   inStock: boolean;
   name: string;
+  barcode?: string;
+  categories?: string[];
 }
 
 export interface UpdateProductByIdInput {

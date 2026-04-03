@@ -61,6 +61,12 @@ export class ProductService {
       formData.append('name', newProduct.name);
       formData.append('amount', String(newProduct.amount));
       formData.append('coin', newProduct.coin);
+      if (newProduct.barcode) {
+        formData.append('barcode', newProduct.barcode);
+      }
+      if (newProduct.categories && newProduct.categories.length > 0) {
+        newProduct.categories.forEach((cat) => formData.append('categories', cat));
+      }
       formData.append('image', image);
       body = formData;
     } else {
@@ -105,6 +111,10 @@ export class ProductService {
       const formData = new FormData();
       if (data.data.name) formData.append('name', data.data.name);
       formData.append('inStock', String(data.data.inStock));
+      if (data.data.barcode !== undefined) formData.append('barcode', data.data.barcode ?? '');
+      if (data.data.categories && data.data.categories.length > 0) {
+        data.data.categories.forEach((cat) => formData.append('categories', cat));
+      }
       formData.append('image', image);
       body = formData;
     } else {
