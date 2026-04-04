@@ -5,7 +5,7 @@ This document provides guidelines for agentic coding agents working in this Angu
 ## Project Overview
 
 - **Framework**: Angular 19 (standalone components)
-- **Styling**: Tailwind CSS v4
+- **Styling**: Tailwind CSS v4 (see DESIGN.md for "Nocturnal Interface" theme)
 - **Testing**: Karma + Jasmine
 - **TypeScript**: Strict mode enabled
 
@@ -25,7 +25,7 @@ npm run build          # Production build
 ### Testing
 ```bash
 npm test               # Run all tests (headless by default)
-ng test --watch        # Run tests in watch mode
+ng test --watch       # Run tests in watch mode
 ng test --include="**/component.spec.ts"   # Run single test file
 ng test --include="**/product.service.spec.ts"   # Run single service test
 ```
@@ -36,6 +36,7 @@ npx tsc --noEmit       # Run TypeScript type checking (strict mode)
 ```
 
 ## File Structure
+
 ```
 src/app/
 ├── components/        # Reusable UI components
@@ -51,40 +52,27 @@ src/app/
 
 ## TypeScript Strict Mode
 
-The project uses strict TypeScript:
-- `strict: true`, `noImplicitOverride: true`, `noPropertyAccessFromIndexSignature: true`
-- `noImplicitReturns: true`, `noFallthroughCasesInSwitch: true`
-- `strictInjectionParameters: true`, `strictTemplates: true`
+Enabled: `strict: true`, `noImplicitOverride: true`, `noPropertyAccessFromIndexSignature: true`, `noImplicitReturns: true`, `noFallthroughCasesInSwitch: true`, `strictInjectionParameters: true`, `strictTemplates: true`
 
 ## Naming Conventions
 
-- **Components**: `kebab-case` selectors, `PascalCase` classes (e.g., `selector: 'app-button'`, `ButtonComponent`)
+- **Components**: `kebab-case` selectors, `PascalCase` classes (e.g., `selector: 'app-button'`)
 - **Files**: `kebab-case` (`.component.ts`, `.service.ts`, `.spec.ts`)
 - **Classes**: `PascalCase`, **Variables/Methods**: `camelCase`, **Constants**: `UPPER_SNAKE_CASE`
 - **Interfaces**: `PascalCase` (e.g., `ProductInterface`), **Enums**: values in `UPPER_SNAKE_CASE`
 
-## TypeScript Guidelines
+## Code Style
 
-- **Type annotations**: Always use explicit types for function parameters and return types
+- **Formatting**: 2 spaces indentation, max 100 chars line length, semicolons, single quotes
+- **Types**: Explicit types for parameters/returns, avoid `any`, handle null/undefined explicitly
 - **Optional properties**: Use `?` operator (e.g., `price?: Price`)
-- **Avoid `any`**: Use proper types or `unknown` instead
-- **Strict null checks**: Handle null/undefined explicitly
-- **Generics**: Use generics for reusable components and services
-- **Getters/Setters**: Use for computed properties with side effects
-- **Early returns**: Prefer early returns for validation checks
-
-## Code Formatting
-
-- Use 2 spaces for indentation, max line length: 100 characters
-- Use semicolons at end of statements, single quotes for strings
+- **Early returns**: Prefer for validation checks
 
 ## Imports Order
 
 1. Angular core imports (`@angular/*`)
 2. Third-party libraries
-3. Internal application imports
-
-Use relative paths from file location.
+3. Internal application imports (use relative paths)
 
 ## Angular Patterns
 
@@ -101,51 +89,38 @@ export class ButtonComponent {}
 ```
 
 ### Dependency Injection
-Use `inject()` function instead of constructor injection:
 ```typescript
 private productService = inject(ProductService);
 ```
 
 ### Services
-- Use `@Injectable({ providedIn: 'root' })` for singleton services
-- Return `Observable` from service methods
+- Use `@Injectable({ providedIn: 'root' })` for singletons
+- Return `Observable` from methods
 - Handle errors with `catchError` returning `of()`
-- Use Spanish error messages: `'No se pudo obtener el producto'`
-
-### Error Handling
-- Always use `catchError` for service calls
-- Return fallback values (empty arrays, error objects)
-- Use `.withContext()` for better error messages in tests
+- Use Spanish error messages (e.g., `'No se pudo obtener el producto'`)
 
 ## Templates (HTML)
 
-- Use semantic HTML with Tailwind CSS classes
+- Use semantic HTML with Tailwind CSS classes (see DESIGN.md for "Nocturnal Interface" colors)
 - Use Angular directives (`[disabled]`, `(click)`, etc.)
-- Keep templates clean; move complex logic to component
+- Move complex logic to component class
 - Use `@if`, `@for` (Angular 17+ control flow) over `*ngIf`, `*ngFor`
 
 ## Testing
 
 - Use `TestBed.configureTestingModule` with `imports: [Component]`
 - Use `ComponentFixture` for component testing
-- Create helper components for testing content projection (`ng-content`)
-- Use descriptive test names in Spanish (e.g., `deberia mostrar el boton`)
+- Descriptive test names in Spanish (e.g., `deberia mostrar el boton`)
 - Use `spyOn` for method spying, mock HTTP with `HttpTestingController`
-
-## CSS / Styling
-
-- Use Tailwind CSS utility classes in templates
-- Use `styleUrl` (singular) for single style file, `styleUrls` for multiple
-- Configure Tailwind via CSS `@import "tailwindcss"` (v4)
+- Use `.withContext()` for better error messages
 
 ## Routes
 
-- Define routes in `app.routes.ts`
+- Define in `app.routes.ts`
 - Use lazy loading: `{ path: 'products', loadComponent: () => import('...').then(m => m.ProductsComponent) }`
 - Use guards for protected routes, `pathMatch: 'full'` for empty path redirects
 
 ## Models
-
 ```typescript
 export interface ProductInterface {
   _id: string;
@@ -160,10 +135,20 @@ export interface ProductInterface {
 - Use `takeUntilDestroyed()` or unsubscribe for subscriptions
 - Use operators: `catchError`, `switchMap`, `map`, `tap`, etc.
 - Return `Observable` from service methods
-- Use `async` pipe in templates to handle subscriptions
+- Use `async` pipe in templates for subscriptions
 
 ## Environment Configuration
 
 - Use `src/environments/environment.ts` and `environment.prod.ts`
 - Custom `set-env.js` script runs before build/serve
-- Never commit secrets or API keys to repository
+- Never commit secrets or API keys
+
+## Design System (DESIGN.md)
+
+Follow "The Nocturnal Interface" theme:
+- **Colors**: Background `#0c0d18`, Primary `#afa2ff`, Surface `#171926` to `#232534`, Text `#eeecfc`
+- **No-Line Rule**: Use background color shifts instead of borders for sectioning
+- **Glassmorphism**: 12-20px blur on semi-transparent surfaces
+- **Typography**: Inter font, editorial hierarchy with size contrast
+- **Elevation**: Layer by luminosity shifts, use diffused shadows
+- **Components**: 0.75rem radius, no sharp corners, no divider lines
