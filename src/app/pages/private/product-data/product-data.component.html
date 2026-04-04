@@ -1,188 +1,225 @@
-<div
-  class="grid grid-cols-1 h-full content-center justify-items-center dark:text-blue-500/80 gap-4"
->
-  <form
-    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
-    [formGroup]="productForm"
-  >
-    <label for="name">Nombre</label>
-    <input
-      type="text"
-      name="name"
-      id="name"
-      formControlName="name"
-      class="border-2 border-indigo-500 rounded-md"
-      [disabled]="isLoading"
-    />
+<div class="container">
+  <!-- Header with Back Button -->
+  <div class="header">
+    <button type="button" class="back-btn" (click)="goBack()">
+      ← Regresar
+    </button>
+  </div>
 
-    <label for="barcode">Código de barras (opcional)</label>
-    <div class="flex gap-2">
-      <input
-        type="text"
-        name="barcode"
-        id="barcode"
-        formControlName="barcode"
-        class="border-2 border-indigo-500 rounded-md flex-1"
-        [disabled]="isLoading"
-      />
-      <button
-        type="button"
-        class="px-3 py-2 bg-indigo-500 text-white rounded-md hover:bg-indigo-600"
-        (click)="startBarcodeScanner()"
-      >
-        📷
-      </button>
-    </div>
+  <!-- Tab Navigation -->
+  <div class="tabs">
+    <button 
+      type="button"
+      class="tab-btn" 
+      [class.active]="activeTab === 'product'"
+      (click)="setActiveTab('product')">
+      Producto
+    </button>
+    <button 
+      type="button"
+      class="tab-btn" 
+      [class.active]="activeTab === 'price'"
+      (click)="setActiveTab('price')">
+      Precio
+    </button>
+    <button 
+      type="button"
+      class="tab-btn" 
+      [class.active]="activeTab === 'stock'"
+      (click)="setActiveTab('stock')">
+      Stock
+    </button>
+  </div>
 
-    <label for="inStock" class="inStock">Mostrar</label>
-    <input
-      type="checkbox"
-      name="inStock"
-      id="inStock"
-      formControlName="inStock"
-      [disabled]="isLoading"
-    />
+  <!-- Tab Content -->
+  <div class="tab-content">
+    @if (activeTab === 'product') {
+      <form class="form-card" [formGroup]="productForm">
+        <label for="name">Nombre</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          formControlName="name"
+          class="input-field"
+          [disabled]="isLoading"
+        />
 
-    <label for="categories">categorías (opcional)</label>
-    <div class="categories-list max-h-32 overflow-y-auto border-2 border-indigo-500 rounded-md p-2">
-      @for (category of categoryList; track category._id) {
-        <div class="flex items-center gap-2">
+        <label for="barcode">Código de barras (opcional)</label>
+        <div class="flex gap-2">
           <input
-            type="checkbox"
-            [id]="'cat-' + category._id"
-            [checked]="isCategorySelected(category._id)"
-            (change)="toggleCategory(category._id)"
+            type="text"
+            name="barcode"
+            id="barcode"
+            formControlName="barcode"
+            class="input-field flex-1"
             [disabled]="isLoading"
           />
-          <label [for]="'cat-' + category._id">{{ category.name }}</label>
+          <button
+            type="button"
+            class="scan-btn"
+            (click)="startBarcodeScanner()"
+          >
+            📷
+          </button>
         </div>
-      }
-    </div>
 
-    <label for="image">imagen (opcional)</label>
-    <input
-      type="file"
-      name="image"
-      id="image"
-      accept="image/jpeg,image/jpg,image/svg+xml"
-      (change)="handlerFileSelect($event)"
-      class="border-2 border-indigo-500 rounded-md"
-      [disabled]="isLoading"
-    />
+        <label for="inStock" class="checkbox-label">Mostrar</label>
+        <input
+          type="checkbox"
+          name="inStock"
+          id="inStock"
+          formControlName="inStock"
+          [disabled]="isLoading"
+        />
 
-    @if (imagePreview) {
-      <img [src]="imagePreview" alt="Preview" class="w-32 h-32 object-cover mt-2" />
-    }
+        <label for="categories">categorías (opcional)</label>
+        <div class="categories-list">
+          @for (category of categoryList; track category._id) {
+            <div class="flex items-center gap-2">
+              <input
+                type="checkbox"
+                [id]="'cat-' + category._id"
+                [checked]="isCategorySelected(category._id)"
+                (change)="toggleCategory(category._id)"
+                [disabled]="isLoading"
+              />
+              <label [for]="'cat-' + category._id">{{ category.name }}</label>
+            </div>
+          }
+        </div>
 
-    <div class="flex justify-end">
-      <app-button
-        [disable]="productForm.status === 'INVALID' || isLoading"
-        (clickEvent)="handlerSubmitProduct()"
-      >
-        Guardar
-      </app-button>
-    </div>
-  </form>
+        <label for="image">imagen (opcional)</label>
+        <input
+          type="file"
+          name="image"
+          id="image"
+          accept="image/jpeg,image/jpg,image/svg+xml"
+          (change)="handlerFileSelect($event)"
+          class="input-field"
+          [disabled]="isLoading"
+        />
 
-  <form
-    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
-    [formGroup]="priceForm"
-  >
-    <label for="amount">Precio</label>
-    <input
-      type="number"
-      name="amount"
-      id="amount"
-      class="border-2 border-indigo-500 rounded-md"
-      formControlName="amount"
-      [disabled]="isLoading"
-    />
+        @if (imagePreview) {
+          <img [src]="imagePreview" alt="Preview" class="image-preview" />
+        }
 
-    <div class="flex justify-between">
-      <app-button (clickEvent)="goBack()">Regresar</app-button>
-      <app-button
-        [disable]="priceForm.status === 'INVALID' || isLoading"
-        (clickEvent)="handlerSubmitPrice()"
-        >Guarda</app-button
-      >
-    </div>
-  </form>
-
-  @if (stock) {
-    <form
-      class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
-    >
-      <div class="flex flex-col">
-        <span class="font-bold">Almacén:</span>
-        <span>{{ stock.warehouseId?.name }}</span>
-      </div>
-
-      <div class="flex flex-col">
-        <span class="font-bold">Cantidad actual:</span>
-        <span [class.text-red-500]="stock.quantity < stock.minQuantity">
-          {{ stock.quantity }}
-        </span>
-      </div>
-
-      <div class="border-t border-indigo-500 pt-4 mt-4">
-        <span class="font-bold">Editar cantidad mínima:</span>
-        <form [formGroup]="minQuantityForm" class="flex gap-2 mt-2">
-          <input
-            type="number"
-            formControlName="minQuantity"
-            class="border-2 border-indigo-500 rounded-md p-1 w-20"
-            min="0"
-          />
+        <div class="flex justify-end">
           <app-button
-            [disable]="minQuantityForm.status === 'INVALID' || isUpdatingStock"
-            (clickEvent)="handlerUpdateMinQuantity()"
+            [disable]="productForm.status === 'INVALID' || isLoading"
+            (clickEvent)="handlerSubmitProduct()"
           >
             Guardar
           </app-button>
-        </form>
-      </div>
+        </div>
+      </form>
+    }
 
-      <div class="border-t border-indigo-500 pt-4 mt-4">
-        <span class="font-bold">Agregar stock:</span>
-        <form class="flex gap-2 mt-2">
-          <input
-            type="number"
-            [formControl]="stockAmountForm.controls.amount"
-            class="border-2 border-indigo-500 rounded-md p-1 w-20"
-            min="1"
-          />
-          <app-button
-            [disable]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
-            (clickEvent)="handlerAddStock()"
-          >
-            Agregar
-          </app-button>
-        </form>
-      </div>
+    @if (activeTab === 'price') {
+      <form class="form-card" [formGroup]="priceForm">
+        <label for="amount">Precio</label>
+        <input
+          type="number"
+          name="amount"
+          id="amount"
+          class="input-field"
+          formControlName="amount"
+          [disabled]="isLoading"
+        />
 
-      <div class="border-t border-indigo-500 pt-4 mt-4">
-        <span class="font-bold">Quitar stock:</span>
-        <form class="flex gap-2 mt-2">
-          <input
-            type="number"
-            [formControl]="stockAmountForm.controls.amount"
-            class="border-2 border-indigo-500 rounded-md p-1 w-20"
-            min="1"
-          />
+        <div class="flex gap-3 justify-end">
           <app-button
-            [disable]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
-            (clickEvent)="handlerRemoveStock()"
+            [disable]="priceForm.status === 'INVALID' || isLoading"
+            (clickEvent)="handlerSubmitPrice()"
           >
-            Quitar
+            Guardar
           </app-button>
-        </form>
+        </div>
+      </form>
+    }
+
+    @if (activeTab === 'stock' && stock) {
+      <form class="form-card">
+        <div class="info-row">
+          <span class="label">Almacén:</span>
+          <span class="value">{{ stock.warehouseId?.name }}</span>
+        </div>
+
+        <div class="info-row">
+          <span class="label">Cantidad actual:</span>
+          <span class="value" [class.text-red-500]="stock.quantity < stock.minQuantity">
+            {{ stock.quantity }}
+          </span>
+        </div>
+
+        <div class="section">
+          <span class="section-title">Editar cantidad mínima:</span>
+          <form [formGroup]="minQuantityForm" class="flex gap-2 mt-2">
+            <input
+              type="number"
+              formControlName="minQuantity"
+              class="input-field w-20"
+              min="0"
+            />
+            <app-button
+              [disable]="minQuantityForm.status === 'INVALID' || isUpdatingStock"
+              (clickEvent)="handlerUpdateMinQuantity()"
+            >
+              Guardar
+            </app-button>
+          </form>
+        </div>
+
+        <div class="section">
+          <span class="section-title">Agregar stock:</span>
+          <form class="flex gap-2 mt-2">
+            <input
+              type="number"
+              [formControl]="stockAmountForm.controls.amount"
+              class="input-field w-20"
+              min="1"
+            />
+            <app-button
+              [disable]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
+              (clickEvent)="handlerAddStock()"
+            >
+              Agregar
+            </app-button>
+          </form>
+        </div>
+
+        <div class="section">
+          <span class="section-title">Quitar stock:</span>
+          <form class="flex gap-2 mt-2">
+            <input
+              type="number"
+              [formControl]="stockAmountForm.controls.amount"
+              class="input-field w-20"
+              min="1"
+            />
+            <app-button
+              [disable]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
+              (clickEvent)="handlerRemoveStock()"
+            >
+              Quitar
+            </app-button>
+          </form>
+        </div>
+      </form>
+    }
+
+    @if (activeTab === 'stock' && !stock) {
+      <div class="form-card">
+        <p class="text-gray-500">No hay información de stock disponible</p>
       </div>
-    </form>
-  }
+    }
+  </div>
 </div>
 
-<app-barcode-scanner
-  [isScanning]="isScanningBarcode"
-  (barcodeScanned)="onBarcodeScanned($event)"
-  (closeScanner)="closeBarcodeScanner()"
-></app-barcode-scanner>
+@if (isScanningBarcode) {
+  <app-barcode-scanner
+    [isScanning]="isScanningBarcode"
+    (barcodeScanned)="onBarcodeScanned($event)"
+    (closeScanner)="closeBarcodeScanner()"
+  ></app-barcode-scanner>
+}

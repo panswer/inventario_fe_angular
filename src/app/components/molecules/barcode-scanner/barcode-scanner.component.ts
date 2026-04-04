@@ -2,6 +2,11 @@ import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, S
 import { CommonModule } from '@angular/common';
 import Quagga from '@ericblade/quagga2';
 
+interface BarcodeFormat {
+  value: string;
+  label: string;
+}
+
 @Component({
   selector: 'app-barcode-scanner',
   standalone: true,
@@ -21,6 +26,18 @@ export class BarcodeScannerComponent implements OnChanges, OnInit, OnDestroy {
   isLoading = true;
   private isInitialized = false;
 
+  selectedFormat = 'auto';
+  
+  barcodeFormats: BarcodeFormat[] = [
+    { value: 'auto', label: 'Auto-detectar' },
+    { value: 'ean_8', label: 'EAN-8' },
+    { value: 'ean_13', label: 'EAN-13' },
+    { value: 'upc', label: 'UPC-A/E' },
+    { value: 'code_128', label: 'Code 128' },
+    { value: 'code_39', label: 'Code 39' },
+    { value: 'qr', label: 'QR Code' },
+  ];
+
   ngOnInit(): void {
     // Nothing to initialize here
   }
@@ -39,6 +56,46 @@ export class BarcodeScannerComponent implements OnChanges, OnInit, OnDestroy {
     this.stopScanner();
   }
 
+  onFormatChange(event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    this.selectedFormat = select.value;
+    this.restartScanner();
+  }
+
+  restartScanner(): void {
+    this.stopScanner();
+    this.isInitialized = false;
+    setTimeout(() => this.startScanner(), 100);
+  }
+
+  private getReadersForFormat(format: string): any[] {
+    switch (format) {
+      case 'ean_8':
+        return ['ean_8_reader'];
+      case 'ean_13':
+        return ['ean_reader'];
+      case 'upc':
+        return ['upc_reader', 'upc_e_reader'];
+      case 'code_128':
+        return ['code_128_reader'];
+      case 'code_39':
+        return ['code_39_reader'];
+      case 'qr':
+        return ['qr_code'];
+      case 'auto':
+      default:
+        return [
+          'ean_reader',
+          'ean_8_reader',
+          'upc_reader',
+          'upc_e_reader',
+          'code_128_reader',
+          'code_39_reader',
+          'code_93_reader',
+        ];
+    }
+  }
+
   startScanner(): void {
     this.errorMessage = '';
     this.isLoading = true;
@@ -55,7 +112,10 @@ export class BarcodeScannerComponent implements OnChanges, OnInit, OnDestroy {
       return;
     }
 
-    console.log('Initializing Quagga2...');
+    console.log('Initializing Quagga2 with format:', this.selectedFormat);
+
+    const readers = this.getReadersForFormat(this.selectedFormat);
+    console.log('Readers:', readers);
 
     Quagga.init(
       {
@@ -69,15 +129,7 @@ export class BarcodeScannerComponent implements OnChanges, OnInit, OnDestroy {
           },
         },
         decoder: {
-          readers: [
-            'ean_reader',
-            'ean_8_reader',
-            'upc_reader',
-            'upc_e_reader',
-            'code_128_reader',
-            'code_39_reader',
-            'code_93_reader',
-          ],
+          readers: readers,
         },
         locate: true,
         locator: {

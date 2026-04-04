@@ -50,6 +50,35 @@
   background: #dc2626;
 }
 
+.format-selector {
+  padding: 12px 20px;
+  background: #f3f4f6;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.format-selector label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: #6b7280;
+  margin-bottom: 6px;
+}
+
+.format-selector select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #6366f1;
+  border-radius: 8px;
+  font-size: 14px;
+  background: white;
+  cursor: pointer;
+}
+
+.format-selector select:focus {
+  outline: none;
+  border-color: #4f46e5;
+}
+
 .video-container {
   position: relative;
   width: 100%;

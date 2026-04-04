@@ -31,6 +31,7 @@ export class ProductDataComponent implements OnInit {
   categoryList: Category[] = [];
   selectedCategories: string[] = [];
   isScanningBarcode = false;
+  activeTab: 'product' | 'price' | 'stock' = 'product';
   
   productForm = new FormGroup({
     name: new FormControl("", [Validators.required, Validators.minLength(2)]),
@@ -200,6 +201,10 @@ export class ProductDataComponent implements OnInit {
 
   closeBarcodeScanner(): void {
     this.isScanningBarcode = false;
+  }
+
+  setActiveTab(tab: 'product' | 'price' | 'stock'): void {
+    this.activeTab = tab;
   }
 
   handlerFileSelect(event: Event): void {
