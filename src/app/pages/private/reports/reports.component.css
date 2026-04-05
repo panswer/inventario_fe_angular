@@ -2,3 +2,147 @@
   display: block;
   height: 100%;
 }
+
+.reports-card {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(23, 25, 38, 0.9) 0%, rgba(35, 37, 52, 0.7) 100%);
+  backdrop-filter: blur(16px);
+  border-radius: 0.75rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.header-row {
+  display: flex;
+}
+
+.tabs {
+  display: flex;
+  gap: 0.25rem;
+  background: #171926;
+  border-radius: 0.5rem;
+  padding: 0.25rem;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(238, 236, 252, 0.6);
+  border-radius: 0.375rem;
+  transition: all 0.2s;
+}
+
+.tab-btn:hover {
+  color: #eeecfc;
+  background: rgba(175, 162, 255, 0.1);
+}
+
+.tab-btn.active {
+  color: #2c0097;
+  background: linear-gradient(135deg, #afa2ff 0%, #7459f7 100%);
+}
+
+.report-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #afa2ff;
+}
+
+.form-select,
+.form-input {
+  padding: 0.75rem 1rem;
+  background-color: #232534;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  color: #eeecfc;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-select:focus,
+.form-input:focus {
+  background-color: #292b3c;
+  box-shadow: 0 0 0 2px rgba(175, 162, 255, 0.2);
+}
+
+.form-select:hover,
+.form-input:hover {
+  background-color: #292b3c;
+}
+
+.form-select option {
+  background-color: #171926;
+  color: #eeecfc;
+}
+
+.date-range {
+  display: flex;
+  gap: 1rem;
+}
+
+.date-range .form-group {
+  flex: 1;
+}
+
+.action-section {
+  display: flex;
+  justify-content: center;
+  margin-top: 0.5rem;
+}
+
+.loading-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(175, 162, 255, 0.1);
+  border-radius: 0.5rem;
+}
+
+.loading-text {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #afa2ff;
+}
+
+@media (max-width: 480px) {
+  .reports-card {
+    padding: 1rem;
+  }
+
+  .tabs {
+    flex-direction: column;
+  }
+
+  .date-range {
+    flex-direction: column;
+    gap: 1rem;
+  }
+}

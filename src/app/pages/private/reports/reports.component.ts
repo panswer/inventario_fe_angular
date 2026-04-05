@@ -8,10 +8,12 @@ import { ProductInterface } from '../../../interfaces/product';
 import { WarehouseInterface } from '../../../interfaces/warehouse';
 import { MovementType } from '../../../interfaces/services/report-service';
 import { Router } from '@angular/router';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowLeft, faFileExcel } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-reports',
-  imports: [ReactiveFormsModule, ButtonComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, FontAwesomeModule],
   templateUrl: './reports.component.html',
   styleUrl: './reports.component.css',
 })
@@ -20,6 +22,9 @@ export class ReportsComponent implements OnInit {
   isLoading = false;
   products: ProductInterface[] = [];
   warehouses: WarehouseInterface[] = [];
+
+  faArrowLeft = faArrowLeft;
+  faFileExcel = faFileExcel;
 
   movementTypes: { value: MovementType | ''; label: string }[] = [
     { value: '', label: 'Todos' },
