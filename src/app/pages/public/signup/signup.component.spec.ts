@@ -89,6 +89,7 @@ describe('SignupComponent', () => {
       component.signupForm.setValue({
         email: 'test@test.com',
         password: 'Password123!',
+        confirmPassword: 'Password123!',
       });
       authServiceSpy.signUp.and.returnValue(of({}));
 
@@ -111,6 +112,7 @@ describe('SignupComponent', () => {
       component.signupForm.setValue({
         email: 'test@test.com',
         password: 'Password123!',
+        confirmPassword: 'Password123!',
       });
       authServiceSpy.signUp.and.returnValue(
         of({ message: 'El usuario ya está registrado' })
@@ -146,6 +148,7 @@ describe('SignupComponent', () => {
       component.signupForm.setValue({
         email: 'test@test.com',
         password: 'Password123!',
+        confirmPassword: 'Password123!',
       });
       expect(component.signupForm.valid).toBeTrue();
     });

@@ -1,38 +1,89 @@
-<div class="grid grid-cols-1 h-full content-center justify-items-center dark:text-blue-500/80">
-  <form
-    class="flex flex-col border-2 rounded-md border-indigo-500 p-5"
-    [formGroup]="signupForm"
-    (submit)="handleSubmit($event)"
-  >
-    <label for="email">email</label>
-    <input
-      type="email"
-      class="border-2 border-indigo-500 rounded-md"
-      formControlName="email"
-      id="email"
-    />
+<div class="min-h-screen w-full flex items-center justify-center bg-gray-100 dark:bg-gray-900 px-4">
+  <div class="w-full max-w-md">
+    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
+      <h1 class="text-2xl font-semibold text-gray-800 dark:text-white text-center mb-8">
+        Crear cuenta
+      </h1>
 
-    <label for="password" class="mt-2">contraseña</label>
-    <input
-      type="password"
-      class="border-2 border-indigo-500 rounded-md"
-      formControlName="password"
-      id="password"
-    />
+      <form [formGroup]="signupForm" (submit)="handleSubmit($event)" class="space-y-6">
+        <div>
+          <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Correo electrónico
+          </label>
+          <input
+            type="email"
+            id="email"
+            formControlName="email"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+            placeholder="correo@ejemplo.com"
+          />
+        </div>
 
-    <button
-      type="submit"
-      class="rounded-md border-indigo-500 mt-2 bg-indigo-500 text-white hover:bg-indigo-800 hover:cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-indigo-500"
-      [disabled]="signupForm.status === 'INVALID' || isLoading"
-    >
-      Registrarse
-    </button>
+        <div>
+          <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Contraseña
+          </label>
+          <input
+            type="password"
+            id="password"
+            formControlName="password"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+            placeholder="••••••••"
+          />
 
-    <a
-      routerLink="/login"
-      class="mt-4 text-center text-sm text-indigo-600 hover:text-indigo-800 hover:underline block"
-    >
-      Ya tengo una cuenta
-    </a>
-  </form>
+          @if (signupForm.errors && signupForm.touched) {
+            <div class="mt-2 text-sm text-red-600 dark:text-red-400">
+              @if (signupForm.errors['uppercase']) {
+                <p>- Debe contener al menos una mayúscula</p>
+              }
+              @if (signupForm.errors['lowercase']) {
+                <p>- Debe contener al menos una minúscula</p>
+              }
+              @if (signupForm.errors['num']) {
+                <p>- Debe contener al menos un número</p>
+              }
+              @if (signupForm.errors['specialChar']) {
+                <p>- Debe contener al menos un carácter especial</p>
+              }
+            </div>
+          }
+        </div>
+
+        <div>
+          <label for="confirmPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Confirmar contraseña
+          </label>
+          <input
+            type="password"
+            id="confirmPassword"
+            formControlName="confirmPassword"
+            class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
+            placeholder="••••••••"
+          />
+
+          @if (signupForm.errors && signupForm.touched && signupForm.errors['passwordMismatch']) {
+            <p class="mt-2 text-sm text-red-600 dark:text-red-400">Las contraseñas no coinciden</p>
+          }
+        </div>
+
+        <button
+          type="submit"
+          class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          [disabled]="signupForm.status === 'INVALID' || isLoading"
+        >
+          {{ isLoading ? 'Registrando...' : 'Registrarse' }}
+        </button>
+
+        <p class="text-center text-sm text-gray-600 dark:text-gray-400">
+          ¿Ya tienes cuenta?
+          <a
+            routerLink="/login"
+            class="text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 hover:underline"
+          >
+            Inicia sesión
+          </a>
+        </p>
+      </form>
+    </div>
+  </div>
 </div>

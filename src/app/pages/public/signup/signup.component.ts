@@ -24,6 +24,7 @@ export class SignupComponent implements OnInit {
       Validators.minLength(8),
       Validators.maxLength(200),
     ]),
+    confirmPassword: new FormControl('', [Validators.required]),
   });
   isLoading = false;
 
@@ -51,6 +52,10 @@ export class SignupComponent implements OnInit {
 
       if (!specialCharReg.test(formGroup.value.password)) {
         errors['specialChar'] = true;
+      }
+
+      if (formGroup.value.password !== formGroup.value.confirmPassword) {
+        errors['passwordMismatch'] = true;
       }
 
       return errors;
