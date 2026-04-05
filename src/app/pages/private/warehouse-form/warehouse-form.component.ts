@@ -3,11 +3,13 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { ActivatedRoute, Router } from '@angular/router';
 import { WarehouseService } from '../../../services/warehouse.service';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-warehouse-form',
   standalone: true,
-  imports: [ReactiveFormsModule, ButtonComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, FontAwesomeModule],
   templateUrl: './warehouse-form.component.html',
   styleUrl: './warehouse-form.component.css',
 })
@@ -16,6 +18,8 @@ export class WarehouseFormComponent implements OnInit {
   isEditMode: boolean = false;
   warehouseId: string | null = null;
   pageTitle: string = 'Crear Almacén';
+  isLoading: boolean = false;
+  faArrowLeft = faArrowLeft;
 
   constructor(
     private fb: FormBuilder,
@@ -61,25 +65,40 @@ export class WarehouseFormComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     const formData = this.warehouseForm.value;
 
     if (this.isEditMode && this.warehouseId) {
-      this.warehouseService.updateWarehouse(this.warehouseId, formData).subscribe((res) => {
-        if (res.warehouse) {
-          this.router.navigate(['/warehouses']);
-        }
-        if (res.message) {
-          alert(res.message);
-        }
+      this.warehouseService.updateWarehouse(this.warehouseId, formData).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          if (res.warehouse) {
+            this.router.navigate(['/warehouses']);
+          }
+          if (res.message) {
+            alert(res.message);
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+          alert('Error al actualizar el almacén');
+        },
       });
     } else {
-      this.warehouseService.createWarehouse(formData).subscribe((res) => {
-        if (res.warehouse) {
-          this.router.navigate(['/warehouses']);
-        }
-        if (res.message) {
-          alert(res.message);
-        }
+      this.warehouseService.createWarehouse(formData).subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          if (res.warehouse) {
+            this.router.navigate(['/warehouses']);
+          }
+          if (res.message) {
+            alert(res.message);
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+          alert('Error al crear el almacén');
+        },
       });
     }
   }

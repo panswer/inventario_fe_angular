@@ -1,32 +1,41 @@
 <div class="flex h-full justify-center pt-5">
-  <div class="warehouse-form">
-    <h2>{{ pageTitle }}</h2>
+  <div class="warehouse-form-card">
+    <h2 class="page-title">{{ pageTitle }}</h2>
     
-    <form [formGroup]="warehouseForm" (ngSubmit)="onSubmit()">
+    <form [formGroup]="warehouseForm">
       <div class="form-group">
-        <label for="name">Nombre</label>
+        <label for="name" class="form-label">Nombre</label>
         <input 
           type="text" 
           id="name" 
           formControlName="name" 
+          class="form-input"
           placeholder="Ingrese el nombre del almacén"
         />
       </div>
 
       <div class="form-group">
-        <label for="address">Dirección</label>
+        <label for="address" class="form-label">Dirección</label>
         <textarea 
           id="address" 
           formControlName="address" 
+          class="form-textarea"
           placeholder="Ingrese la dirección del almacén"
         ></textarea>
       </div>
 
       <div class="button-group">
-        <app-button (clickEvent)="onSubmit()">
-          {{ isEditMode ? 'Actualizar' : 'Crear' }}
+        <app-button (clickEvent)="onSubmit()" [disabled]="isLoading">
+          @if (isLoading) {
+            {{ isEditMode ? 'Actualizando...' : 'Creando...' }}
+          } @else {
+            {{ isEditMode ? 'Actualizar' : 'Crear' }}
+          }
         </app-button>
-        <app-button (clickEvent)="goBack()">Cancelar</app-button>
+        <app-button (clickEvent)="goBack()" variant="secondary">
+          <fa-icon [icon]="faArrowLeft"></fa-icon>
+          Cancelar
+        </app-button>
       </div>
     </form>
   </div>
