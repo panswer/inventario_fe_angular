@@ -106,7 +106,7 @@
 
         <div class="flex justify-end">
           <app-button
-            [disable]="productForm.status === 'INVALID' || isLoading"
+            [disabled]="productForm.status === 'INVALID' || isLoading"
             (clickEvent)="handlerSubmitProduct()"
           >
             Guardar
@@ -129,7 +129,7 @@
 
         <div class="flex gap-3 justify-end">
           <app-button
-            [disable]="priceForm.status === 'INVALID' || isLoading"
+            [disabled]="priceForm.status === 'INVALID' || isLoading"
             (clickEvent)="handlerSubmitPrice()"
           >
             Guardar
@@ -162,7 +162,7 @@
               min="0"
             />
             <app-button
-              [disable]="minQuantityForm.status === 'INVALID' || isUpdatingStock"
+              [disabled]="minQuantityForm.status === 'INVALID' || isUpdatingStock"
               (clickEvent)="handlerUpdateMinQuantity()"
             >
               Guardar
@@ -180,7 +180,7 @@
               min="1"
             />
             <app-button
-              [disable]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
+              [disabled]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
               (clickEvent)="handlerAddStock()"
             >
               Agregar
@@ -198,7 +198,7 @@
               min="1"
             />
             <app-button
-              [disable]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
+              [disabled]="stockAmountForm.status === 'INVALID' || isUpdatingStock"
               (clickEvent)="handlerRemoveStock()"
             >
               Quitar

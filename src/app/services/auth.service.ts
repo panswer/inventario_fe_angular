@@ -96,4 +96,9 @@ export class AuthService {
         })
       );
   }
+
+  logout(): void {
+    this.requestService.logout();
+    this.router.navigate(['/login']);
+  }
 }

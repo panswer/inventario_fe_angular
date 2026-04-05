@@ -1,0 +1,31 @@
+<nav class="navbar">
+  <div class="navbar-brand">
+    <span class="brand-text">INVENTARIO</span>
+  </div>
+
+  <button class="mobile-toggle" (click)="toggleMobileMenu()" aria-label="Toggle menu">
+    <fa-icon [icon]="isMobileMenuOpen() ? faTimes : faBars"></fa-icon>
+  </button>
+
+  <ul class="navbar-nav" [class.open]="isMobileMenuOpen()">
+    @for (item of navItems; track item.route) {
+      <li class="nav-item">
+        <a 
+          class="nav-link" 
+          [routerLink]="item.route" 
+          routerLinkActive="active"
+          (click)="closeMobileMenu()"
+        >
+          <fa-icon [icon]="item.icon" class="nav-icon"></fa-icon>
+          <span class="nav-label">{{ item.label }}</span>
+        </a>
+      </li>
+    }
+    <li class="nav-item nav-logout">
+      <button class="nav-link logout-btn" (click)="logout()">
+        <fa-icon [icon]="faSignOutAlt" class="nav-icon"></fa-icon>
+        <span class="nav-label">Cerrar sesión</span>
+      </button>
+    </li>
+  </ul>
+</nav>

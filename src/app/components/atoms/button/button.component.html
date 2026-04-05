@@ -1,5 +1,6 @@
 <button
-  class="rounded-md border-indigo-500 bg-indigo-500 text-white hover:bg-indigo-800 hover:cursor-pointer disabled:cursor-not-allowed hover:disabled:bg-indigo-500 p-1"
+  class="btn"
+  [ngClass]="{ 'btn-primary': variant === 'primary', 'btn-secondary': variant === 'secondary' }"
   [disabled]="disable"
   (click)="handlerClickEvent($event)"
 >

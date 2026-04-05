@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -21,12 +21,17 @@ import { BarcodeScannerComponent } from '../../../components/molecules/barcode-s
   styleUrl: './create-product.component.css',
 })
 export class CreateProductComponent implements OnInit {
-  isLoading = true;
+  private productService = inject(ProductService);
+  private router = inject(Router);
+  private priceService = inject(PriceService);
+  private categoryService = inject(CategoryService);
+
+  isLoading = signal(true);
   coinList: string[] = [];
   categoryList: Category[] = [];
   selectedCategories: string[] = [];
   selectedImage: File | null = null;
-  imagePreview: string | null = null;
+  imagePreview = signal<string | null>(null);
   isScanningBarcode = false;
 
   productForm = new FormGroup({
@@ -36,18 +41,11 @@ export class CreateProductComponent implements OnInit {
     barcode: new FormControl('', []),
   });
 
-  constructor(
-    private productService: ProductService,
-    private router: Router,
-    private priceService: PriceService,
-    private categoryService: CategoryService
-  ) {}
-
   ngOnInit(): void {
     this.priceService.getAllCoins().subscribe((coins) => {
       this.coinList = coins;
       if (coins.length > 0) {
-        this.isLoading = false;
+        this.isLoading.set(false);
       }
     });
 
@@ -56,16 +54,12 @@ export class CreateProductComponent implements OnInit {
     });
   }
 
-  handlerPreventEvent(e: any) {
-    e.preventDefault();
-  }
-
-  handlerSubmit() {
+  handlerSubmit(): void {
     if (this.productForm.invalid) {
       return;
     }
 
-    this.isLoading = true;
+    this.isLoading.set(true);
 
     const { amount, coin, name, barcode } = this.productForm.value as CreateProduct;
     this.productService
@@ -85,12 +79,12 @@ export class CreateProductComponent implements OnInit {
         } else {
           this.productForm.reset({ name: '', amount: 0, coin: '', barcode: '' });
           this.selectedImage = null;
-          this.imagePreview = null;
+          this.imagePreview.set(null);
           this.selectedCategories = [];
           alert('Se creo el producto');
         }
 
-        this.isLoading = false;
+        this.isLoading.set(false);
       });
   }
 
@@ -143,13 +137,13 @@ export class CreateProductComponent implements OnInit {
       this.selectedImage = file;
       const reader = new FileReader();
       reader.onload = () => {
-        this.imagePreview = reader.result as string;
+        this.imagePreview.set(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
   }
 
-  goBack() {
+  goBack(): void {
     this.router.navigate(['']);
   }
 }

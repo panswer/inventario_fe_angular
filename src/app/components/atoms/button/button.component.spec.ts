@@ -48,7 +48,7 @@ describe('ButtonComponent', () => {
   });
 
   it('debería estar deshabilitado cuando la propiedad disable es true', () => {
-    component.disable = true;
+    component.disabled = true;
     fixture.detectChanges();
     const buttonElement: HTMLButtonElement | null =
       nativeElement.querySelector('button');
@@ -58,7 +58,7 @@ describe('ButtonComponent', () => {
 
   it('no debería emitir el evento clickEvent si está deshabilitado', () => {
     spyOn(component.clickEvent, 'emit');
-    component.disable = true;
+    component.disabled = true;
     fixture.detectChanges();
 
     const buttonElement: HTMLButtonElement | null =
@@ -70,22 +70,8 @@ describe('ButtonComponent', () => {
 
   it('debería tener las clases de estilo correctas por defecto', () => {
     const buttonElement = nativeElement.querySelector('button');
-    const expectedClasses = [
-      'rounded-md',
-      'border-indigo-500',
-      'bg-indigo-500',
-      'text-white',
-      'hover:bg-indigo-800',
-      'hover:cursor-pointer',
-      'disabled:cursor-not-allowed',
-      'hover:disabled:bg-indigo-500',
-      'p-1',
-    ];
 
-    expectedClasses.forEach((cssClass) => {
-      expect(buttonElement?.classList.contains(cssClass))
-        .withContext(`La clase ${cssClass} no fue encontrada`)
-        .toBeTrue();
-    });
+    expect(buttonElement?.classList.contains('btn')).toBeTrue();
+    expect(buttonElement?.classList.contains('btn-primary')).toBeTrue();
   });
 });

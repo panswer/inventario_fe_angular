@@ -85,9 +85,4 @@ describe('ProductsComponent', () => {
     component.goToProductData('prod-xyz');
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/product', 'prod-xyz']);
   });
-
-  it('goToSeller debería navegar a seller', () => {
-    component.goToSeller();
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['seller']);
-  });
 });

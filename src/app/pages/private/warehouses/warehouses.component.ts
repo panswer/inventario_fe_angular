@@ -77,26 +77,6 @@ export class WarehousesComponent implements OnInit {
     });
   }
 
-  goToProducts(): void {
-    this.router.navigate(['/']);
-  }
-
-  goToStocks(): void {
-    this.router.navigate(['/stock']);
-  }
-
-  goToSellers(): void {
-    this.router.navigate(['/seller']);
-  }
-
-  goToReports(): void {
-    this.router.navigate(['/report']);
-  }
-
-  goToUsers(): void {
-    this.router.navigate(['/users']);
-  }
-
   goToWarehouseForm(): void {
     this.router.navigate(['/warehouses/new']);
   }

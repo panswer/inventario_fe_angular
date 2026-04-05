@@ -4,10 +4,11 @@ This document provides guidelines for agentic coding agents working in this Angu
 
 ## Project Overview
 
-- **Framework**: Angular 19 (standalone components)
+- **Framework**: Angular 19 (standalone components with signals)
 - **Styling**: Tailwind CSS v4 (see DESIGN.md for "Nocturnal Interface" theme)
-- **Testing**: Karma + Jasmine
+- **Testing**: Karma + Jasmine (headless by default)
 - **TypeScript**: Strict mode enabled
+- **State**: Services with RxJS BehaviorSubjects
 
 ## Commands
 
@@ -98,6 +99,13 @@ private productService = inject(ProductService);
 - Return `Observable` from methods
 - Handle errors with `catchError` returning `of()`
 - Use Spanish error messages (e.g., `'No se pudo obtener el producto'`)
+- Use `BehaviorSubject` for state management in services
+
+## Error Handling
+
+- Services: Use `catchError` operator with `return of(null)` or error value
+- Components: Subscribe with error handling, display user-friendly messages in Spanish
+- HTTP errors: Handle status codes (400, 401, 404, 500) appropriately
 
 ## Templates (HTML)
 

@@ -69,14 +69,6 @@ export class StocksComponent implements OnInit {
     });
   }
 
-  goToProducts(): void {
-    this.router.navigate(['/']);
-  }
-
-  goToSellers(): void {
-    this.router.navigate(['/seller']);
-  }
-
   goToTransfer(): void {
     this.router.navigate(['/transfer']);
   }

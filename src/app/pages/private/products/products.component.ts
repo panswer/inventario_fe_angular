@@ -78,24 +78,4 @@ export class ProductsComponent implements OnInit {
   goToProductData(id: string) {
     this.router.navigate(['/product', id]);
   }
-
-  goToSeller() {
-    this.router.navigate(['seller']);
-  }
-
-  goToStock() {
-    this.router.navigate(['stock']);
-  }
-
-  goToReports() {
-    this.router.navigate(['report']);
-  }
-
-  goToUsers() {
-    this.router.navigate(['users']);
-  }
-
-  goToWarehouses() {
-    this.router.navigate(['warehouses']);
-  }
 }

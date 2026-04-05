@@ -37,7 +37,6 @@ describe('CreateProductComponent', () => {
 
     fixture = TestBed.createComponent(CreateProductComponent);
     component = fixture.componentInstance;
-    // No llamar a detectChanges aquí para controlar ngOnInit
   });
 
   it('should create', () => {
@@ -46,13 +45,11 @@ describe('CreateProductComponent', () => {
   });
 
   it('ngOnInit debería cargar la lista de monedas y establecer isLoading en false', () => {
-    expect(component.isLoading).toBeTrue();
-
-    fixture.detectChanges(); // Llama a ngOnInit
-
+    expect(component.isLoading()).toBeTrue();
+    fixture.detectChanges();
     expect(priceServiceSpy.getAllCoins).toHaveBeenCalled();
     expect(component.coinList).toEqual(['USD', 'EUR']);
-    expect(component.isLoading).toBeFalse();
+    expect(component.isLoading()).toBeFalse();
   });
 
   it('goBack debería navegar a la ruta raíz', () => {
@@ -62,7 +59,7 @@ describe('CreateProductComponent', () => {
 
   describe('handlerSubmit', () => {
     beforeEach(() => {
-      fixture.detectChanges(); // Para que el formulario y los datos iniciales estén listos
+      fixture.detectChanges();
     });
 
     it('no debería llamar a createProduct si el formulario es inválido', () => {
@@ -73,7 +70,7 @@ describe('CreateProductComponent', () => {
     it('debería llamar a createProduct y mostrar alerta de éxito', fakeAsync(() => {
       spyOn(window, 'alert');
       productServiceSpy.createProduct.and.returnValue(
-        of({ product: {} as any, price: {} as any })
+        of({ product: {} as never, price: {} as never })
       );
 
       component.productForm.setValue({
@@ -93,11 +90,11 @@ describe('CreateProductComponent', () => {
         categories: undefined,
       });
 
-      tick(); // Simula el paso del tiempo para el observable
+      tick();
 
       expect(window.alert).toHaveBeenCalledWith('Se creo el producto');
       expect(component.productForm.value).toEqual({ name: '', amount: 0, coin: '', barcode: '' });
-      expect(component.isLoading).toBeFalse();
+      expect(component.isLoading()).toBeFalse();
     }));
 
     it('debería llamar a createProduct y mostrar alerta de error', fakeAsync(() => {
@@ -117,14 +114,7 @@ describe('CreateProductComponent', () => {
       tick();
 
       expect(window.alert).toHaveBeenCalledWith('Error al crear');
-      expect(component.isLoading).toBeFalse();
+      expect(component.isLoading()).toBeFalse();
     }));
-  });
-
-  it('handlerPreventEvent debería prevenir la acción por defecto del evento', () => {
-    const mockEvent = jasmine.createSpyObj('Event', ['preventDefault']);
-    component.handlerPreventEvent(mockEvent);
-    fixture.detectChanges();
-    expect(mockEvent.preventDefault).toHaveBeenCalled();
   });
 });

@@ -1,34 +1,45 @@
 import {
   Component,
   ContentChild,
+  EventEmitter,
   Input,
+  Output,
   TemplateRef,
 } from '@angular/core';
-import { NgFor, NgIf, NgTemplateOutlet } from '@angular/common';
+import { NgTemplateOutlet } from '@angular/common';
 import { TableHeadCol } from '../../../interfaces/components/table';
 import { TableBodyCellDirective } from '../../../directives/table-body-cell.directive';
 import { PaginatorComponent } from '../../atoms/paginator/paginator.component';
 
 @Component({
   selector: 'app-table',
-  imports: [NgFor, NgIf, NgTemplateOutlet, PaginatorComponent],
+  imports: [NgTemplateOutlet, PaginatorComponent],
   templateUrl: './table.component.html',
   styleUrl: './table.component.css',
 })
-export class TableComponent {
+export class TableComponent<T> {
   @Input({ required: true }) cols: TableHeadCol[] = [];
-  @Input({}) rows: Record<string, any>[] | null = [];
+  @Input() rows: T[] | null = [];
   @Input({ required: true }) total: number = 1;
+  @Input() page: number = 1;
+  @Input() limit: number = 10;
+
+  @Output() pageChange = new EventEmitter<number>();
+  @Output() limitChange = new EventEmitter<number>();
 
   @ContentChild(TableBodyCellDirective, { read: TemplateRef })
-  tableBodyCellTemplate?: TemplateRef<any>;
+  tableBodyCellTemplate?: TemplateRef<unknown>;
 
-  getNestedValue(obj: Record<string, any>, path: string): any {
-    return path.split('.').reduce((current: any, key: string) => {
+  getNestedValue(obj: T, path: string): unknown {
+    const keys = path.split('.');
+    let current: unknown = obj;
+    for (const key of keys) {
       if (current && typeof current === 'object') {
-        return (current as Record<string, any>)[key];
+        current = (current as Record<string, unknown>)[key];
+      } else {
+        return undefined;
       }
-      return current[key];
-    }, obj);
+    }
+    return current;
   }
 }

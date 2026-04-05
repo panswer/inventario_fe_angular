@@ -1,27 +1,29 @@
-<div class="flex gap-2">
-  <select name="limitOption" id="limit-option" [formControl]="currentLimit">
-    <option *ngFor="let option of limitOptions" [value]="option">
-      {{ option }}
-    </option>
+<div class="paginator">
+  <select class="paginator-select" [value]="_limit()" (change)="onLimitChange($event)">
+    @for (option of limitOptions; track option) {
+      <option [value]="option">{{ option }}</option>
+    }
   </select>
 
-  <div class="flex gap-2">
+  <div class="paginator-controls">
     <button
-      class="hover:bg-blue-500 rounded-full w-6 h-6 hover:cursor-pointer disabled:hover:bg-inherit disabled:text-gray-500 disabled:hover:cursor-default"
+      class="paginator-btn"
       (click)="handleChangePage(-1)"
-      [disabled]="currentPage <= 1"
+      [disabled]="_page() <= 1"
+      aria-label="Página anterior"
     >
-      <fa-icon [icon]="faArrowAltCircleLeft"></fa-icon>
+      <fa-icon [icon]="faChevronLeft"></fa-icon>
     </button>
 
-    <span class="cursor-default">{{ currentPage }}</span>
+    <span class="paginator-info">{{ _page() }} / {{ totalPages() }}</span>
 
     <button
-      class="hover:bg-blue-500 rounded-full w-6 h-6 hover:cursor-pointer disabled:hover:bg-inherit disabled:text-gray-500 disabled:hover:cursor-default"
+      class="paginator-btn"
       (click)="handleChangePage(1)"
-      [disabled]="currentPage >= totalPages"
+      [disabled]="_page() >= totalPages()"
+      aria-label="Página siguiente"
     >
-      <fa-icon [icon]="faArrowAltCircleRight"></fa-icon>
+      <fa-icon [icon]="faChevronRight"></fa-icon>
     </button>
   </div>
 </div>
