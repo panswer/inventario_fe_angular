@@ -1,11 +1,11 @@
 <div class="flex h-full justify-center pt-5">
-  <div class="transfer-form">
-    <h2>Transferir Stock</h2>
+  <div class="transfer-card">
+    <h2 class="page-title">Transferir Stock</h2>
 
-    <form [formGroup]="transferForm">
+    <form [formGroup]="transferForm" class="transfer-form">
       <div class="form-group">
-        <label for="productId">Producto</label>
-        <select id="productId" formControlName="productId" (change)="onProductChange()">
+        <label for="productId" class="form-label">Producto</label>
+        <select id="productId" formControlName="productId" (change)="onProductChange()" class="form-select">
           <option value="">Seleccione un producto</option>
           @for (product of products; track product._id) {
             <option [value]="product._id">
@@ -16,8 +16,8 @@
       </div>
 
       <div class="form-group">
-        <label for="fromWarehouseId">Almacén Origen</label>
-        <select id="fromWarehouseId" formControlName="fromWarehouseId" (change)="onSourceWarehouseChange()">
+        <label for="fromWarehouseId" class="form-label">Almacén Origen</label>
+        <select id="fromWarehouseId" formControlName="fromWarehouseId" (change)="onSourceWarehouseChange()" class="form-select">
           <option value="">Seleccione un almacén</option>
           @for (stock of stocksByProduct; track stock.warehouseId) {
             <option [value]="stock.warehouseId">
@@ -26,15 +26,16 @@
           }
         </select>
         @if (availableStock > 0) {
-          <div class="stock-info">
-            Stock disponible: {{ availableStock }}
+          <div class="stock-badge">
+            <span class="stock-label">Disponible:</span>
+            <span class="stock-value">{{ availableStock }}</span>
           </div>
         }
       </div>
 
       <div class="form-group">
-        <label for="toWarehouseId">Almacén Destino</label>
-        <select id="toWarehouseId" formControlName="toWarehouseId">
+        <label for="toWarehouseId" class="form-label">Almacén Destino</label>
+        <select id="toWarehouseId" formControlName="toWarehouseId" class="form-select">
           <option value="">Seleccione un almacén</option>
           @for (warehouse of warehouses; track warehouse._id) {
             <option [value]="warehouse._id">
@@ -45,13 +46,15 @@
       </div>
 
       <div class="form-group">
-        <label for="quantity">Cantidad</label>
+        <label for="quantity" class="form-label">Cantidad</label>
         <input
           type="number"
           id="quantity"
           formControlName="quantity"
           min="1"
           [max]="availableStock"
+          class="form-input"
+          placeholder="Ingrese la cantidad"
         />
         @if (transferForm.get('quantity')?.errors?.['max']) {
           <div class="error-text">
@@ -61,8 +64,14 @@
       </div>
 
       <div class="button-group">
-        <app-button (clickEvent)="onSubmit()">Transferir</app-button>
-        <app-button (clickEvent)="goBack()">Cancelar</app-button>
+        <app-button (clickEvent)="onSubmit()" [disabled]="isLoading">
+          @if (isLoading) {
+            Transferiendo...
+          } @else {
+            Transferir
+          }
+        </app-button>
+        <app-button (clickEvent)="goBack()" variant="secondary">Cancelar</app-button>
       </div>
     </form>
   </div>

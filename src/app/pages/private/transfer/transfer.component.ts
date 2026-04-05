@@ -28,6 +28,7 @@ export class TransferComponent implements OnInit {
   warehouses: WarehouseInterface[] = [];
   stocksByProduct: StockByWarehouse[] = [];
   availableStock: number = 0;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -122,6 +123,7 @@ export class TransferComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     this.stockService
       .transferStock({
         productId,
@@ -129,15 +131,22 @@ export class TransferComponent implements OnInit {
         toWarehouseId,
         quantity,
       })
-      .subscribe((res) => {
-        if (res.message) {
-          alert(res.message);
-        } else {
-          alert('Transferencia realizada exitosamente');
-          this.transferForm.reset();
-          this.stocksByProduct = [];
-          this.availableStock = 0;
-        }
+      .subscribe({
+        next: (res) => {
+          this.isLoading = false;
+          if (res.message) {
+            alert(res.message);
+          } else {
+            alert('Transferencia realizada exitosamente');
+            this.transferForm.reset();
+            this.stocksByProduct = [];
+            this.availableStock = 0;
+          }
+        },
+        error: () => {
+          this.isLoading = false;
+          alert('Error al realizar la transferencia');
+        },
       });
   }
 

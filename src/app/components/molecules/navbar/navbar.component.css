@@ -6,6 +6,7 @@
   padding: 0 1.5rem;
   height: 3.5rem;
   position: relative;
+  z-index: 1000;
 }
 
 .navbar-brand {
@@ -111,6 +112,7 @@
 
   .navbar-nav.open {
     display: flex;
+    z-index: 1001;
   }
 
   .nav-item {

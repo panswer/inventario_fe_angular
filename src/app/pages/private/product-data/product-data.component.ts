@@ -13,10 +13,12 @@ import { map } from 'rxjs';
 import { Location } from '@angular/common';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
 import { BarcodeScannerComponent } from '../../../components/molecules/barcode-scanner/barcode-scanner.component';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { faArrowLeft, faCamera, faBox, faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-product-data',
-  imports: [ReactiveFormsModule, ButtonComponent, BarcodeScannerComponent],
+  imports: [ReactiveFormsModule, ButtonComponent, BarcodeScannerComponent, FontAwesomeModule],
   templateUrl: './product-data.component.html',
   styleUrl: './product-data.component.css'
 })
@@ -32,6 +34,11 @@ export class ProductDataComponent implements OnInit {
   selectedCategories: string[] = [];
   isScanningBarcode = false;
   activeTab: 'product' | 'price' | 'stock' = 'product';
+
+  faArrowLeft = faArrowLeft;
+  faCamera = faCamera;
+  faBox = faBox;
+  faExclamationTriangle = faExclamationTriangle;
   
   productForm = new FormGroup({
     name: new FormControl("", [Validators.required, Validators.minLength(2)]),
