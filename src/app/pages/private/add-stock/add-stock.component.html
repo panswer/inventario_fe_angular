@@ -1,11 +1,11 @@
 <div class="flex h-full justify-center pt-5">
-  <div class="add-stock-form">
-    <h2>Agregar Stock</h2>
+  <div class="add-stock-card">
+    <h2 class="page-title">Agregar Stock</h2>
 
-    <form [formGroup]="stockForm">
+    <form [formGroup]="stockForm" class="add-stock-form">
       <div class="form-group">
-        <label for="productId">Producto</label>
-        <select id="productId" formControlName="productId" (change)="onProductChange()">
+        <label for="productId" class="form-label">Producto</label>
+        <select id="productId" formControlName="productId" (change)="onProductChange()" class="form-select">
           <option value="">Seleccione un producto</option>
           @for (product of products; track product._id) {
             <option [value]="product._id">
@@ -16,8 +16,8 @@
       </div>
 
       <div class="form-group">
-        <label for="warehouseId">Almacén</label>
-        <select id="warehouseId" formControlName="warehouseId" (change)="onWarehouseChange()">
+        <label for="warehouseId" class="form-label">Almacén</label>
+        <select id="warehouseId" formControlName="warehouseId" (change)="onWarehouseChange()" class="form-select">
           <option value="">Seleccione un almacén</option>
           @for (warehouse of warehouses; track warehouse._id) {
             <option [value]="warehouse._id">
@@ -25,42 +25,57 @@
             </option>
           }
         </select>
-        @if (currentStock > 0) {
-          <div class="stock-info">
-            Stock actual: {{ currentStock }}
-          </div>
-        } @else {
-          <div class="stock-info">
-            No existe stock para este producto en este almacén
-          </div>
+        @if (stockForm.get('warehouseId')?.value) {
+          @if (currentStock > 0) {
+            <div class="stock-badge stock-existing">
+              <span class="stock-label">Stock actual:</span>
+              <span class="stock-value">{{ currentStock }}</span>
+            </div>
+          } @else {
+            <div class="stock-badge stock-empty">
+              <span>No existe stock para este producto en este almacén</span>
+            </div>
+          }
         }
       </div>
 
       <div class="form-group">
-        <label for="quantity">Cantidad a agregar</label>
+        <label for="quantity" class="form-label">Cantidad a agregar</label>
         <input
           type="number"
           id="quantity"
           formControlName="quantity"
+          class="form-input"
           min="1"
+          placeholder="Ingrese la cantidad"
         />
       </div>
 
       <div class="form-group">
-        <label for="minQuantity">Cantidad mínima (opcional)</label>
+        <label for="minQuantity" class="form-label">Cantidad mínima (opcional)</label>
         <input
           type="number"
           id="minQuantity"
           formControlName="minQuantity"
+          class="form-input"
           min="0"
+          placeholder="Stock mínimo de alerta"
         />
       </div>
 
       <div class="button-group">
-        <app-button (clickEvent)="onSubmit()">
-          {{ existingStockId ? 'Agregar' : 'Crear' }}
+        <app-button (clickEvent)="onSubmit()" [disabled]="isLoading">
+          @if (isLoading) {
+            @if (existingStockId) {
+              Agregando...
+            } @else {
+              Creando...
+            }
+          } @else {
+            {{ existingStockId ? 'Agregar' : 'Crear' }}
+          }
         </app-button>
-        <app-button (clickEvent)="goBack()">Cancelar</app-button>
+        <app-button (clickEvent)="goBack()" variant="secondary">Cancelar</app-button>
       </div>
     </form>
   </div>

@@ -22,6 +22,7 @@ export class AddStockComponent implements OnInit {
   warehouses: WarehouseInterface[] = [];
   currentStock: number = 0;
   existingStockId: string | null = null;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
@@ -92,6 +93,7 @@ export class AddStockComponent implements OnInit {
       return;
     }
 
+    this.isLoading = true;
     const { productId, warehouseId, quantity, minQuantity } = this.stockForm.value;
 
     if (this.existingStockId) {
@@ -100,15 +102,22 @@ export class AddStockComponent implements OnInit {
           stockId: this.existingStockId,
           amount: quantity,
         })
-        .subscribe((res) => {
-          if (res.message) {
-            alert(res.message);
-          } else {
-            alert('Stock agregado exitosamente');
-            this.stockForm.reset();
-            this.currentStock = 0;
-            this.existingStockId = null;
-          }
+        .subscribe({
+          next: (res) => {
+            this.isLoading = false;
+            if (res.message) {
+              alert(res.message);
+            } else {
+              alert('Stock agregado exitosamente');
+              this.stockForm.reset();
+              this.currentStock = 0;
+              this.existingStockId = null;
+            }
+          },
+          error: () => {
+            this.isLoading = false;
+            alert('Error al agregar stock');
+          },
         });
     } else {
       this.stockService
@@ -118,15 +127,22 @@ export class AddStockComponent implements OnInit {
           quantity,
           minQuantity: minQuantity || 0,
         })
-        .subscribe((res) => {
-          if (res.message) {
-            alert(res.message);
-          } else {
-            alert('Stock creado exitosamente');
-            this.stockForm.reset();
-            this.currentStock = 0;
-            this.existingStockId = null;
-          }
+        .subscribe({
+          next: (res) => {
+            this.isLoading = false;
+            if (res.message) {
+              alert(res.message);
+            } else {
+              alert('Stock creado exitosamente');
+              this.stockForm.reset();
+              this.currentStock = 0;
+              this.existingStockId = null;
+            }
+          },
+          error: () => {
+            this.isLoading = false;
+            alert('Error al crear stock');
+          },
         });
     }
   }
