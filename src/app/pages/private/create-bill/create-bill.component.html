@@ -1,92 +1,145 @@
-<div class="flex h-full justify-center items-center flex-col">
-  <div class="flex flex-col">
-    <div class="search-barcode flex items-center gap-3 mb-4">
-      <input
-        type="text"
-        name="barcode"
-        id="barcode"
-        class="border-2 border-indigo-500 rounded-md px-3 py-2"
-        placeholder="Código de barras"
-        [formControl]="searchControl"
-        (keyup.enter)="searchByBarcode()"
-      />
-      <app-button (clickEvent)="searchByBarcode()">Buscar</app-button>
-      <app-button (clickEvent)="startScanner()">Escanear</app-button>
+<div class="flex h-full justify-center items-start pt-5 pb-5">
+  <div class="create-bill-card">
+    <h2 class="page-title">Nueva Venta</h2>
+
+    <div class="search-section">
+      <label class="form-label">Buscar por código de barras</label>
+      <div class="search-barcode">
+        <input
+          type="text"
+          name="barcode"
+          id="barcode"
+          class="form-input"
+          placeholder="Ingrese el código de barras"
+          [formControl]="searchControl"
+          (keyup.enter)="searchByBarcode()"
+        />
+        <app-button (clickEvent)="searchByBarcode()" variant="secondary">
+          <fa-icon [icon]="faSearch"></fa-icon>
+        </app-button>
+        <app-button (clickEvent)="startScanner()">
+          <fa-icon [icon]="faCamera"></fa-icon>
+        </app-button>
+      </div>
     </div>
 
     @if (searchedProduct) {
-      <div class="search-result bg-gray-100 p-4 rounded-md mb-4">
-        <p><strong>Producto:</strong> {{ searchedProduct.product.name }}</p>
-        <p><strong>Precio:</strong> {{ searchedProduct.price.amount }} {{ searchedProduct.price.coin }}</p>
-        <div class="flex items-center gap-3 mt-2">
-          <input
-            type="number"
-            name="searchCount"
-            class="border-2 border-indigo-500 rounded-md px-3 py-2"
-            placeholder="cantidad"
-            [formControl]="searchedProductCount"
-          />
-          <app-button (clickEvent)="addSearchedProductToCart()">agregar</app-button>
-          <app-button (clickEvent)="clearSearch()">cancelar</app-button>
+      <div class="search-result">
+        <div class="search-result-header">
+          <span class="result-label">Producto encontrado</span>
+        </div>
+        <div class="search-result-body">
+          <div class="product-info">
+            <span class="product-name">{{ searchedProduct.product.name }}</span>
+            <span class="product-price">
+              {{ searchedProduct.price.amount }} {{ searchedProduct.price.coin }}
+            </span>
+          </div>
+          <div class="search-result-actions">
+            <input
+              type="number"
+              name="searchCount"
+              class="form-input quantity-input"
+              placeholder="Cant"
+              [formControl]="searchedProductCount"
+              min="1"
+            />
+            <app-button (clickEvent)="addSearchedProductToCart()">
+              <fa-icon [icon]="faPlus"></fa-icon>
+            </app-button>
+            <app-button (clickEvent)="clearSearch()" variant="secondary">
+              <fa-icon [icon]="faTimes"></fa-icon>
+            </app-button>
+          </div>
         </div>
       </div>
     }
 
-    <form [formGroup]="mainFormGroup">
-      <div class="add-control flex items-center gap-3">
-        <select
-          name="stocks"
-          id="stocks"
-          class="border-2 border-indigo-500 rounded-md px-3 py-2"
-          placeholder="producto"
-          formControlName="stock"
-        >
-          @for (stock of availableStocks; track stock._id) {
-            <option [value]="stock._id">
-              {{ stock.productId?.name }} ({{ stock.quantity }})
-            </option>
-          }
-        </select>
-        <input
-          type="number"
-          name=""
-          id="count"
-          class="border-2 border-indigo-500 rounded-md px-3 py-2"
-          placeholder="cantidad"
-          formControlName="count"
-        />
-        <app-button (clickEvent)="handlerAddProduct()">agregar</app-button>
-      </div>
-    </form>
-
-    <ul class="seller_list-container mt-4">
-      @for (shopItem of shoppingCar; track shopItem) {
-        <li class="seller_item-content flex items-center gap-3 py-2" [formGroup]="shopItem">
-          <span class="flex-1">{{ getStockProductName(shopItem.value['stockId']) }}</span>
-          <span class="w-20 text-right">{{ getStockPrice(shopItem.value['stockId']) }} {{ getStockCoin(shopItem.value['stockId']) }}</span>
-          <span class="w-16 text-center">x{{ shopItem.value['count'] }}</span>
-          <span class="w-24 text-right font-semibold">{{ getItemSubtotal(shopItem.value['stockId']) }} {{ getStockCoin(shopItem.value['stockId']) }}</span>
+    <div class="add-product-section">
+      <label class="form-label">O seleccione un producto</label>
+      <form [formGroup]="mainFormGroup">
+        <div class="add-control">
+          <select
+            name="stocks"
+            id="stocks"
+            class="form-select"
+            formControlName="stock"
+          >
+            <option value="">Seleccione un producto</option>
+            @for (stock of availableStocks; track stock._id) {
+              <option [value]="stock._id">
+                {{ stock.productId?.name }} ({{ stock.quantity }} disponibles)
+              </option>
+            }
+          </select>
           <input
             type="number"
             name="count"
-            class="border-2 border-indigo-500 rounded-md px-2 py-1 w-20"
-            placeholder="cantidad"
+            id="count"
+            class="form-input quantity-input"
+            placeholder="Cant"
             formControlName="count"
+            min="1"
           />
-          <app-button (clickEvent)="deleteShoppingItem(shopItem)">x</app-button>
-        </li>
-      }
-    </ul>
+          <app-button (clickEvent)="handlerAddProduct()">
+            <fa-icon [icon]="faPlus"></fa-icon>
+          </app-button>
+        </div>
+      </form>
+    </div>
 
     @if (shoppingCar.length > 0) {
-      <div class="total-price mt-4 text-right text-xl font-bold">
-        <span>Total: {{ totalPrice }} {{ getStockCoin(shoppingCar[0].value['stockId']) }}</span>
+      <div class="cart-section">
+        <h3 class="section-title">Carrito de compra</h3>
+        <ul class="cart-list">
+          @for (shopItem of shoppingCar; track shopItem) {
+            <li class="cart-item" [formGroup]="shopItem">
+              <div class="cart-item-info">
+                <span class="cart-item-name">{{ getStockProductName(shopItem.value['stockId']) }}</span>
+                <span class="cart-item-price">
+                  {{ getStockPrice(shopItem.value['stockId']) }} {{ getStockCoin(shopItem.value['stockId']) }} x
+                </span>
+              </div>
+              <div class="cart-item-actions">
+                <input
+                  type="number"
+                  name="count"
+                  class="form-input quantity-input-sm"
+                  placeholder="Cant"
+                  formControlName="count"
+                  min="1"
+                />
+                <span class="cart-item-subtotal">
+                  {{ getItemSubtotal(shopItem.value['stockId']) }} {{ getStockCoin(shopItem.value['stockId']) }}
+                </span>
+                <app-button (clickEvent)="deleteShoppingItem(shopItem)" variant="secondary">
+                  <fa-icon [icon]="faTrash"></fa-icon>
+                </app-button>
+              </div>
+            </li>
+          }
+        </ul>
+
+        <div class="total-section">
+          <span class="total-label">Total:</span>
+          <span class="total-value">{{ totalPrice }} {{ getStockCoin(shoppingCar[0].value['stockId']) }}</span>
+        </div>
       </div>
     }
 
-    <div class="flex w-full flex-row gap-6 justify-end mt-3">
-      <app-button (clickEvent)="handlerBack()">regresar</app-button>
-      <app-button (clickEvent)="handlerSubmitBill()">Agregar venta</app-button>
+    <div class="action-buttons">
+      <app-button (clickEvent)="handlerBack()" variant="secondary">
+        <fa-icon [icon]="faArrowLeft"></fa-icon>
+        Regresar
+      </app-button>
+      <app-button (clickEvent)="handlerSubmitBill()" [disabled]="isLoading || shoppingCar.length === 0">
+        @if (isLoading) {
+          Procesando...
+        } @else {
+          <fa-icon [icon]="faCheck"></fa-icon>
+          Finalizar venta
+        }
+      </app-button>
     </div>
   </div>
 </div>

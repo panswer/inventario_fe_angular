@@ -9,6 +9,16 @@ import { StockService } from '../../../services/stock.service';
 import { StockInterface } from '../../../interfaces/stock';
 import { ProductService } from '../../../services/product.service';
 import { ProductInterface } from '../../../interfaces/product';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import {
+  faSearch,
+  faCamera,
+  faPlus,
+  faTimes,
+  faTrash,
+  faArrowLeft,
+  faCheck,
+} from '@fortawesome/free-solid-svg-icons';
 
 interface SearchedProduct {
   product: ProductInterface;
@@ -17,7 +27,7 @@ interface SearchedProduct {
 
 @Component({
   selector: 'app-create-bill',
-  imports: [ReactiveFormsModule, CommonModule, ButtonComponent, BarcodeScannerComponent],
+  imports: [ReactiveFormsModule, CommonModule, ButtonComponent, BarcodeScannerComponent, FontAwesomeModule],
   templateUrl: './create-bill.component.html',
   styleUrl: './create-bill.component.css'
 })
@@ -30,6 +40,15 @@ export class CreateBillComponent implements OnInit {
   searchedProductCount = new FormControl<number>(1, [Validators.required, Validators.min(1)]);
 
   isScanning = false;
+  isLoading = false;
+
+  faSearch = faSearch;
+  faCamera = faCamera;
+  faPlus = faPlus;
+  faTimes = faTimes;
+  faTrash = faTrash;
+  faArrowLeft = faArrowLeft;
+  faCheck = faCheck;
 
   controllersForm = {
     stock: new FormControl<string>('', [Validators.required]),
@@ -179,11 +198,13 @@ export class CreateBillComponent implements OnInit {
   }
 
   handlerSubmitBill() {
+    if (this.shoppingCar.length === 0) {
+      alert('Agregue productos al carrito');
+      return;
+    }
+
+    this.isLoading = true;
     this.mainFormGroup.disable();
-    this.mainFormGroup.setValue({
-      count: null,
-      stock: '',
-    });
 
     const shoppingItems: CreateBillItemInput[] = this.shoppingCar.map(shopItem => {
       const stockId = shopItem.value['stockId'];
@@ -195,16 +216,24 @@ export class CreateBillComponent implements OnInit {
       }
     });
 
-    this.billService.createBill({ sellers: shoppingItems }).subscribe(res => {
-      if (res.message) {
-        alert("No se pudo guardar la orden");
-      } else {
-        alert("Se guardo la orden");
-      }
+    this.billService.createBill({ sellers: shoppingItems }).subscribe({
+      next: (res) => {
+        this.isLoading = false;
+        if (res.message) {
+          alert(res.message);
+        } else {
+          alert('Venta registrada exitosamente');
+        }
 
-      this.shoppingCar = [];
-      this.syncProductList();
-      this.mainFormGroup.enable();
+        this.shoppingCar = [];
+        this.syncProductList();
+        this.mainFormGroup.enable();
+      },
+      error: () => {
+        this.isLoading = false;
+        this.mainFormGroup.enable();
+        alert('Error al registrar la venta');
+      },
     });
   }
 
