@@ -3,4 +3,5 @@ export interface TableHeadCol {
   text: string;
   align?: 'left' | 'center' | 'right';
   sortable?: boolean;
+  overflow?: boolean;
 }

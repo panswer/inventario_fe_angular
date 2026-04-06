@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -9,6 +9,7 @@ import { lowerReg, numReg, specialCharReg, upperReg } from '../../../utils/reg';
 import { AuthService } from '../../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-signup',
@@ -17,6 +18,8 @@ import { finalize } from 'rxjs';
   styleUrl: './signup.component.css',
 })
 export class SignupComponent implements OnInit {
+  private toastService = inject(ToastService);
+
   signupForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
@@ -75,9 +78,10 @@ export class SignupComponent implements OnInit {
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe((res) => {
           if (res.message) {
-            alert(res.message);
+            this.toastService.error(res.message);
             return;
           }
+          this.toastService.success('Cuenta creada correctamente');
           this.router.navigate(['/login']);
         });
     }

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { TableComponent } from '../../../components/molecules/table/table.component';
 import { TableHeadCol } from '../../../interfaces/components/table';
 import { DatePipe, Location, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault } from '@angular/common';
@@ -9,14 +9,18 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faArrowLeft, faPen, faUserShield } from '@fortawesome/free-solid-svg-icons';
 import { ButtonComponent } from '../../../components/atoms/button/button.component';
 import { FormsModule } from '@angular/forms';
+import { ModalComponent } from '../../../components/molecules/modal/modal.component';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-users',
-  imports: [TableComponent, TableBodyCellDirective, DatePipe, FontAwesomeModule, FormsModule, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonComponent],
+  imports: [TableComponent, TableBodyCellDirective, DatePipe, FontAwesomeModule, FormsModule, NgClass, NgFor, NgIf, NgSwitch, NgSwitchCase, NgSwitchDefault, ButtonComponent, ModalComponent],
   templateUrl: './users.component.html',
   styleUrl: './users.component.css'
 })
 export class UsersComponent implements OnInit {
+  private toastService = inject(ToastService);
+
   tableField: TableHeadCol[] = [{
     field: 'username',
     text: 'Usuario'
@@ -30,8 +34,10 @@ export class UsersComponent implements OnInit {
 
   users: User[] = [];
   roles = ['admin', 'manager', 'cashier', 'user'];
-  editingUserId: string | null = null;
   selectedRole = '';
+  showModal = false;
+  selectedUser: User | null = null;
+  isLoading = false;
   icon = {
     pen: faPen,
     userShield: faUserShield,
@@ -57,27 +63,33 @@ export class UsersComponent implements OnInit {
     });
   }
 
-  editRole(user: User) {
-    this.editingUserId = user._id;
+  openRoleModal(user: User) {
+    this.selectedUser = user;
     this.selectedRole = user.role;
+    this.showModal = true;
   }
 
-  cancelEdit() {
-    this.editingUserId = null;
+  closeModal() {
+    this.showModal = false;
+    this.selectedUser = null;
     this.selectedRole = '';
   }
 
-  saveRole(userId: string) {
-    this.userService.updateUserRole(userId, { role: this.selectedRole }).subscribe({
+  saveRole() {
+    if (!this.selectedUser) return;
+
+    this.isLoading = true;
+    this.userService.updateUserRole(this.selectedUser._id, { role: this.selectedRole }).subscribe({
       next: () => {
         this.loadUsers();
-        this.editingUserId = null;
-        this.selectedRole = '';
+        this.closeModal();
+        this.isLoading = false;
+        this.toastService.success('Rol actualizado correctamente');
       },
       error: () => {
-        alert('Error al actualizar el rol');
-        this.editingUserId = null;
-        this.selectedRole = '';
+        this.toastService.error('Error al actualizar el rol');
+        this.closeModal();
+        this.isLoading = false;
       }
     });
   }

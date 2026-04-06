@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import {
   ReactiveFormsModule,
   FormGroup,
@@ -10,6 +10,7 @@ import { AuthService } from '../../../services/auth.service';
 import { Router, RouterLink } from '@angular/router';
 import { finalize } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-login',
@@ -18,6 +19,8 @@ import { environment } from '../../../../environments/environment';
   styleUrl: './login.component.css',
 })
 export class LoginComponent implements OnInit {
+  private toastService = inject(ToastService);
+
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('', [
@@ -79,11 +82,12 @@ export class LoginComponent implements OnInit {
         .pipe(finalize(() => (this.isLoading = false)))
         .subscribe((res) => {
           if (res.message) {
-            alert(res.message);
+            this.toastService.error(res.message);
             return;
           }
           if (res.authorization) {
             this.loginForm.reset();
+            this.toastService.success('Sesión iniciada correctamente');
             this.router.navigate(['']);
           }
         });
