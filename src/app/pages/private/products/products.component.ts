@@ -55,6 +55,8 @@ export class ProductsComponent implements OnInit {
     page: 1,
     limit: 10,
   };
+  currentPage: number = 1;
+  currentLimit: number = 10;
 
   editIcon = faEdit;
 
@@ -77,5 +79,25 @@ export class ProductsComponent implements OnInit {
 
   goToProductData(id: string) {
     this.router.navigate(['/product', id]);
+  }
+
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.loadProducts();
+  }
+
+  onLimitChange(limit: number): void {
+    this.currentLimit = limit;
+    this.currentPage = 1;
+    this.loadProducts();
+  }
+
+  private loadProducts(): void {
+    this.productService
+      .getAllProducts({ page: this.currentPage, limit: this.currentLimit })
+      .subscribe((res) => {
+        this.products = res.products;
+        this.productTotal = res.total;
+      });
   }
 }

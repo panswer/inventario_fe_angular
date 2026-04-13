@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, computed, signal } from '@angular/core';
+import { Component, EventEmitter, Input, Output, signal } from '@angular/core';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import {
   faChevronLeft,
@@ -30,7 +30,9 @@ export class PaginatorComponent {
   protected readonly _page = signal(1);
   protected readonly limitOptions = [10, 25, 50, 100];
 
-  protected readonly totalPages = computed(() => Math.ceil(this._total() / this._limit()) || 1);
+  protected get totalPages(): number {
+    return Math.ceil(this._total() / this._limit()) || 1;
+  }
 
   protected readonly faChevronLeft = faChevronLeft;
   protected readonly faChevronRight = faChevronRight;
@@ -46,7 +48,7 @@ export class PaginatorComponent {
 
   handleChangePage(delta: number): void {
     const newPage = this._page() + delta;
-    if (newPage < 1 || newPage > this.totalPages()) {
+    if (newPage < 1 || newPage > this.totalPages) {
       return;
     }
     this._page.set(newPage);

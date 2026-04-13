@@ -3,7 +3,15 @@
     <div class="pb-2">
       <app-button (clickEvent)="goToCreateProduct()">crear producto</app-button>
     </div>
-    <app-table [cols]="tableField" [rows]="products" [total]="productTotal">
+    <app-table 
+      [cols]="tableField" 
+      [rows]="products" 
+      [total]="productTotal"
+      [page]="currentPage"
+      [limit]="currentLimit"
+      (pageChange)="onPageChange($event)"
+      (limitChange)="onLimitChange($event)"
+    >
       <ng-template appTableBodyCell let-element let-key="key">
         <ng-container [ngSwitch]="key">
           <ng-container *ngSwitchCase="'createdAt'">

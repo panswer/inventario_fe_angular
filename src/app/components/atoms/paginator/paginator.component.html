@@ -15,12 +15,12 @@
       <fa-icon [icon]="faChevronLeft"></fa-icon>
     </button>
 
-    <span class="paginator-info">{{ _page() }} / {{ totalPages() }}</span>
+    <span class="paginator-info">{{ _page() }} / {{ totalPages }}</span>
 
     <button
       class="paginator-btn"
       (click)="handleChangePage(1)"
-      [disabled]="_page() >= totalPages()"
+      [disabled]="_page() >= totalPages"
       aria-label="Página siguiente"
     >
       <fa-icon [icon]="faChevronRight"></fa-icon>

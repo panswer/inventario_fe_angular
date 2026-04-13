@@ -113,7 +113,6 @@
         <app-button variant="secondary" (clickEvent)="goBack()">Cancelar</app-button>
         <app-button 
           [disabled]="productForm.status === 'INVALID' || isLoading()" 
-          (clickEvent)="handlerSubmit()"
         >
           Crear Producto
         </app-button>
