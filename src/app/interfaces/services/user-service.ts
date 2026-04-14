@@ -1,5 +1,9 @@
 import { User } from "../../interfaces/user";
 
+export interface GetProfileOutput {
+    user: User;
+}
+
 export interface GetUsersOutput {
     users: User[];
 }

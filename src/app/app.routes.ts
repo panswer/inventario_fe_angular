@@ -2,8 +2,10 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/public/login/login.component';
 import { SignupComponent } from './pages/public/signup/signup.component';
 import { ResetPasswordComponent } from './pages/public/reset-password/reset-password.component';
+import { UnauthorizedComponent } from './pages/public/unauthorized/unauthorized.component';
 import { ProductsComponent } from './pages/private/products/products.component';
 import { authGuard } from './guards/auth.guard';
+import { roleGuard } from './guards/role.guard';
 import { Page404Component } from './pages/public/page-404/page-404.component';
 import { CreateProductComponent } from './pages/private/create-product/create-product.component';
 import { ProductDataComponent } from './pages/private/product-data/product-data.component';
@@ -26,6 +28,8 @@ export const routes: Routes = [
       {
         path: '',
         component: ProductsComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'manager', 'cashier'] }
       },
       {
         path: 'product',
@@ -33,10 +37,14 @@ export const routes: Routes = [
           {
             path: 'new',
             component: CreateProductComponent,
+            canActivate: [roleGuard],
+            data: { roles: ['admin', 'manager'] }
           },
           {
             path: ':productId',
             component: ProductDataComponent,
+            canActivate: [roleGuard],
+            data: { roles: ['admin', 'manager', 'cashier'] }
           },
         ],
       },
@@ -45,12 +53,18 @@ export const routes: Routes = [
         children: [{
           path: '',
           component: StocksComponent,
+          canActivate: [roleGuard],
+          data: { roles: ['admin', 'manager'] }
         }, {
           path: 'add',
           component: AddStockComponent,
+          canActivate: [roleGuard],
+          data: { roles: ['admin', 'manager'] }
         }, {
           path: ':stockId',
           component: StockDataComponent,
+          canActivate: [roleGuard],
+          data: { roles: ['admin', 'manager'] }
         }],
       },
       {
@@ -58,20 +72,30 @@ export const routes: Routes = [
         children: [{
           path: '',
           component: SellersComponent,
+          canActivate: [roleGuard],
+          data: { roles: ['admin', 'manager'] }
         }, {
           path: 'create',
           component: CreateBillComponent,
+          canActivate: [roleGuard],
+          data: { roles: ['admin', 'manager', 'cashier'] }
         }, {
           path: ':billId',
           component: BillDataComponent,
+          canActivate: [roleGuard],
+          data: { roles: ['admin', 'manager'] }
         }],
       }, {
         path: 'report',
         component: ReportsComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'manager'] }
       },
       {
         path: 'users',
         component: UsersComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['admin'] }
       },
       {
         path: 'warehouses',
@@ -79,20 +103,28 @@ export const routes: Routes = [
           {
             path: '',
             component: WarehousesComponent,
+            canActivate: [roleGuard],
+            data: { roles: ['admin', 'manager'] }
           },
           {
             path: 'new',
             component: WarehouseFormComponent,
+            canActivate: [roleGuard],
+            data: { roles: ['admin', 'manager'] }
           },
           {
             path: ':warehouseId',
             component: WarehouseFormComponent,
+            canActivate: [roleGuard],
+            data: { roles: ['admin', 'manager'] }
           },
         ],
       },
       {
         path: 'transfer',
         component: TransferComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'manager'] }
       },
     ],
     canActivateChild: [authGuard],
@@ -108,6 +140,10 @@ export const routes: Routes = [
   {
     path: 'reset-password',
     component: ResetPasswordComponent,
+  },
+  {
+    path: 'unauthorized',
+    component: UnauthorizedComponent,
   },
   {
     path: "**",

@@ -32,6 +32,11 @@ export class ResetPasswordComponent {
       Validators.minLength(8),
       Validators.maxLength(200),
     ]),
+    confirmPassword: new FormControl('', [
+      Validators.required,
+      Validators.minLength(8),
+      Validators.maxLength(200),
+    ]),
   });
 
   isLoading = false;
@@ -39,6 +44,11 @@ export class ResetPasswordComponent {
   isSuccess = false;
   currentStep: 1 | 2 = 1;
   email = '';
+  showPassword = false;
+  upperReg = upperReg;
+  lowerReg = lowerReg;
+  numReg = numReg;
+  specialCharReg = specialCharReg;
 
   constructor(private authService: AuthService, private router: Router) {
     this.verifyForm.addValidators((formGroup) => {
@@ -61,8 +71,22 @@ export class ResetPasswordComponent {
         errors['specialChar'] = true;
       }
 
+      if (passwordValue && formGroup.value.confirmPassword !== passwordValue) {
+        errors['passwordMismatch'] = true;
+      }
+
       return errors;
     });
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  get passwordsMatch(): boolean {
+    const password = this.verifyForm.get('password')?.value;
+    const confirmPassword = this.verifyForm.get('confirmPassword')?.value;
+    return !!(password && confirmPassword && password === confirmPassword);
   }
 
   handleEmailSubmit(e: Event): void {

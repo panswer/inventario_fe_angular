@@ -35,3 +35,7 @@ export interface AuthServiceResetPasswordVerifyOutput {
     message?: string;
     code?: number;
 }
+
+export interface AuthServiceSignOutOutput {
+    message?: string;
+}

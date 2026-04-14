@@ -3,4 +3,6 @@ export enum AuthorizationPath {
     SIGN_UP = "/auth/sign-up",
     RESET_PASSWORD = "/auth/reset-password",
     RESET_PASSWORD_VERIFY = "/auth/reset-password/verify",
+    SIGN_OUT = "/auth/sign-out",
+    USER_PROFILE = "/users/profile",
 }

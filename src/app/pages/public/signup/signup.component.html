@@ -14,6 +14,7 @@
             type="email"
             id="email"
             formControlName="email"
+            autocomplete="off"
             class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
             placeholder="correo@ejemplo.com"
           />
@@ -24,9 +25,16 @@
             Contraseña
           </label>
           <input
+            type="text"
+            name="fake-password-autofill-field"
+            autocomplete="off"
+            class="hidden"
+          />
+          <input
             type="password"
             id="password"
             formControlName="password"
+            autocomplete="new-password"
             class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
             placeholder="••••••••"
           />
@@ -54,9 +62,16 @@
             Confirmar contraseña
           </label>
           <input
+            type="text"
+            name="fake-password-autofill-field"
+            autocomplete="off"
+            class="hidden"
+          />
+          <input
             type="password"
             id="confirmPassword"
             formControlName="confirmPassword"
+            autocomplete="new-password"
             class="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent outline-none transition-all"
             placeholder="••••••••"
           />
